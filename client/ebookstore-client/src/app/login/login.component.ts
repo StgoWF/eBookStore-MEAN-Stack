@@ -10,6 +10,7 @@ import { UserService } from '../user.service';
 export class LoginComponent {
   email: string = '';
   password: string = '';
+  message: string = '';
 
   constructor(private userService: UserService) {}
 
@@ -17,10 +18,10 @@ export class LoginComponent {
     const user = { email: this.email, password: this.password };
     this.userService.login(user).subscribe(
       response => {
-        console.log('User logged in successfully');
+        this.message = 'Login successful';
       },
       error => {
-        console.error('Error logging in user', error);
+        this.message = 'Login failed';
       }
     );
   }

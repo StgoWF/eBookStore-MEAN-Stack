@@ -11,6 +11,7 @@ export class RegisterComponent {
   username: string = '';
   email: string = '';
   password: string = '';
+  message: string = '';
 
   constructor(private userService: UserService) {}
 
@@ -18,11 +19,12 @@ export class RegisterComponent {
     const user = { username: this.username, email: this.email, password: this.password };
     this.userService.register(user).subscribe(
       response => {
-        console.log('User registered successfully');
+        this.message = 'Registration successful';
       },
       error => {
-        console.error('Error registering user', error);
+        this.message = 'Registration failed';
       }
     );
   }
 }
+
