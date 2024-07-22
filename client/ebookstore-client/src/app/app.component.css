@@ -1,0 +1,33 @@
+/* Estilos generales para la barra de navegación */
+.navbar {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+  }
+  
+  /* Contenedor de la barra de navegación */
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Estilo para el nombre de la marca */
+  .navbar-brand {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: white;
+  }
+  
+  /* Estilo para los enlaces de la barra de navegación */
+  .navbar-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 1rem;
+    font-size: 1rem;
+  }
+  
+  .navbar-links a:hover {
+    text-decoration: underline;
+  }
+  

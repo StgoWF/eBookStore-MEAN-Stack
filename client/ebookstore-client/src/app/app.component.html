@@ -1,8 +1,14 @@
 <!-- src/app/app.component.html -->
-<nav>
-  <a routerLink="/register">Register</a>
-  <a routerLink="/login">Login</a>
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="#" class="navbar-brand"><i class="fas fa-book"></i> EbookEmporium</a>
+    <div class="navbar-links">
+      <a routerLink="/books">Books</a>
+      <a routerLink="/cart">Cart</a>
+      <a *ngIf="!isLoggedIn" routerLink="/register">Register</a>
+      <a *ngIf="!isLoggedIn" routerLink="/login">Login</a>
+      <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
+    </div>
+  </div>
 </nav>
-
 <router-outlet></router-outlet>
- 

@@ -1,0 +1,19 @@
+// src/app/cart/cart.component.html
+<h1>Shopping Cart</h1>
+
+<div *ngIf="errorMessage">
+  <p>{{ errorMessage }}</p>
+</div>
+
+<div *ngIf="cart && cart.items.length > 0">
+  <ul>
+    <li *ngFor="let item of cart.items">
+      {{ item.book?.title || 'Unknown Title' }} - {{ item.quantity }}
+    </li>
+  </ul>
+  <button (click)="clearCart()">Clear Cart</button>
+</div>
+
+<div *ngIf="cart && cart.items.length === 0">
+  <p>Your cart is empty</p>
+</div>

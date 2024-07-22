@@ -1,9 +1,13 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Book = require('./models/Book');
+const admin = require('./firebase-admin'); // Importa firebase-admin
+const jwt = require('jsonwebtoken'); // Asegúrate de tener esta línea
+
+const userRoutes = require('./routes/userRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 const app = express();
 
@@ -21,7 +25,7 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Connect to MongoDB
+// Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -34,15 +38,51 @@ db.once('open', () => {
   seedBooks();  // Llamar a la función seedBooks para insertar datos de prueba
 });
 
-// Routes
-const userRoutes = require('./routes/userRoutes');
-const bookRoutes = require('./routes/bookRoutes');
+// Middleware para verificar tokens de Firebase y JWT
+const verifyToken = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send('Unauthorized');
+  }
 
-app.use('/api/users', userRoutes);
+  const token = authHeader.split('Bearer ')[1];
+
+  if (!token) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  try {
+    // Primero intenta verificar el token como un token de Firebase
+    const decodedFirebaseToken = await admin.auth().verifyIdToken(token);
+    console.log('Firebase token verified:', decodedFirebaseToken);
+    req.user = { id: decodedFirebaseToken.uid }; // Usar uid como id del usuario
+    return next();
+  } catch (error) {
+    console.log('Firebase token verification failed:', error.message);
+  }
+
+  try {
+    // Si falla, intenta verificar el token como un token JWT local
+    const decodedJwtToken = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('JWT token verified:', decodedJwtToken);
+    req.user = decodedJwtToken;
+    return next();
+  } catch (error) {
+    console.log('JWT token verification failed:', error.message);
+    return res.status(401).send('Unauthorized');
+  }
+};
+
+// Usar las rutas sin verificación de token para libros y autenticación
 app.use('/api/books', bookRoutes);
+app.use('/api/users', userRoutes);
+
+// Usar las rutas con verificación de token para el carrito
+app.use('/api/cart', verifyToken, cartRoutes);
 
 // Función para insertar datos de prueba
 async function seedBooks() {
+  const Book = require('./models/Book'); // Asegúrate de importar el modelo aquí
   const books = [
     {
       title: 'The Great Gatsby',

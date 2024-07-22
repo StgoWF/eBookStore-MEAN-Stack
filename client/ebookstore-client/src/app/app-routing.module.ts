@@ -1,19 +1,23 @@
 // src/app/app-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RegisterComponent } from './register/register.component';
-import { LoginComponent } from './login/login.component';
 import { BookListComponent } from './book-list/book-list.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
-import { NotFoundComponent } from './not-found/not-found.component'; // Nuevo componente para manejar 404
+import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { CartComponent } from './cart/cart.component'; // Asegúrate de tener este componente
+import { DataDeletionComponent } from './data-deletion/data-deletion.component';
+
 
 const routes: Routes = [
+  { path: 'books', component: BookListComponent },
+  { path: 'book/:id', component: BookDetailComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'books', component: BookListComponent },
-  { path: 'books/:id', component: BookDetailComponent },
-  { path: '', redirectTo: '/books', pathMatch: 'full' }, // Redirige a la lista de libros por defecto
-  { path: '**', component: NotFoundComponent } // Maneja rutas no encontradas
+  { path: 'cart', component: CartComponent }, // Añade la ruta del carrito
+  { path: '', redirectTo: '/books', pathMatch: 'full' },
+  { path: '**', redirectTo: '/books' }, // Rutas no encontradas
+  { path: 'data-deletion', component: DataDeletionComponent }
 ];
 
 @NgModule({
