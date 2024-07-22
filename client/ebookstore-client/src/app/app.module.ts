@@ -10,7 +10,10 @@ import { RegisterComponent } from './register/register.component';
 import { BookListComponent } from './book-list/book-list.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
 import { CartComponent } from './cart/cart.component';
+import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 import { TokenInterceptor } from './token.interceptor';
+import { NotificationModalComponent } from './notification-modal/notification-modal.component';
+import { NotificationService } from './notification.service'; // Importar el servicio de notificación
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -33,7 +36,9 @@ const appRoutes: Routes = [
     RegisterComponent,
     BookListComponent,
     BookDetailComponent,
-    CartComponent
+    CartComponent,
+    CartSidebarComponent,
+    NotificationModalComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +49,8 @@ const appRoutes: Routes = [
     AngularFireAuthModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    NotificationService // Proveer el servicio de notificación
   ],
   bootstrap: [AppComponent]
 })

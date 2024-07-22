@@ -1,0 +1,50 @@
+.notification-modal {
+    position: fixed;
+    top: 10px; /* Ajusta según la altura de tu barra de navegación */
+    left: 50%;
+    background-color: #4CAF50; /* Cambia esto al color que prefieras */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .notification-content p {
+    margin: 0;
+    padding-right: 10px;
+    font-size: 1em;
+  }
+  
+  .notification-content button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .notification-content button:hover {
+    color: #ff5555;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

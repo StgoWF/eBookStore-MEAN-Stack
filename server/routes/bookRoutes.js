@@ -1,7 +1,7 @@
-// server/routes/bookRoutes.js
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
+const getBookImage = require('../services/bookImageService');
 
 // Get all books
 router.get('/', async (req, res) => {
@@ -15,15 +15,18 @@ router.get('/', async (req, res) => {
 
 // Add a new book
 router.post('/', async (req, res) => {
-  const book = new Book({
-    title: req.body.title,
-    author: req.body.author,
-    genre: req.body.genre,
-    price: req.body.price,
-    description: req.body.description
-  });
-
   try {
+    const imageUrl = await getBookImage(req.body.title);
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      genre: req.body.genre,
+      price: req.body.price,
+      description: req.body.description,
+      imageUrl: imageUrl, // Añadir la URL de la imagen
+    });
+
     const newBook = await book.save();
     res.status(201).json(newBook);
   } catch (err) {

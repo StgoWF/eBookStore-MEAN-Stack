@@ -1,18 +1,47 @@
 <h1>Shopping Cart</h1>
 
-<div *ngIf="errorMessage">
+<div *ngIf="errorMessage" class="error-message">
   <p>{{ errorMessage }}</p>
 </div>
 
-<div *ngIf="cart && cart.items.length > 0">
-  <ul>
-    <li *ngFor="let item of cart.items">
-      {{ item.book?.title || 'Unknown Title' }} - {{ item.quantity }}
+<div *ngIf="cart && cart.items.length > 0" class="cart-container">
+  <ul class="cart-items">
+    <li *ngFor="let item of cart.items" class="cart-item">
+      <div *ngIf="item.book" class="cart-item-details">
+        <img [src]="item.book.imageUrl" alt="{{ item.book.title }}" class="book-image"/>
+        <div class="cart-item-info">
+          <h3>{{ item.book.title }}</h3>
+          <p>{{ item.book.price | currency }}</p>
+          <div class="cart-item-actions">
+            <button (click)="decreaseQuantity(item.book._id)">-</button>
+            <input type="number" [(ngModel)]="item.quantity" (change)="updateQuantity(item.book._id, item.quantity)" min="1" class="quantity-input" />
+            <button (click)="increaseQuantity(item.book._id)">+</button>
+            <button (click)="removeFromCart(item.book._id)" class="remove-btn">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!item.book" class="cart-item-details">
+        <div class="cart-item-info">
+          <h3>Unknown Title</h3>
+          <div class="cart-item-actions">
+            <button (click)="decreaseQuantity(item.book._id)">-</button>
+            <input type="number" [(ngModel)]="item.quantity" (change)="updateQuantity(item.book._id, item.quantity)" min="1" class="quantity-input" />
+            <button (click)="increaseQuantity(item.book._id)">+</button>
+            <button (click)="removeFromCart(item.book._id)" class="remove-btn">Remove</button>
+          </div>
+        </div>
+      </div>
     </li>
   </ul>
-  <button (click)="clearCart()">Clear Cart</button>
+  <div class="cart-footer">
+    <p>Total: {{ getTotal() | currency }}</p>
+    <div class="cart-footer-buttons">
+      <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
+      <button (click)="checkout()" class="checkout-btn">Checkout</button>
+    </div>
+  </div>
 </div>
 
-<div *ngIf="cart && cart.items.length === 0">
+<div *ngIf="cart && cart.items.length === 0" class="empty-cart-message">
   <p>Your cart is empty</p>
 </div>

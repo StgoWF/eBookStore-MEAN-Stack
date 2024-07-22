@@ -1,10 +1,14 @@
-<div *ngFor="let book of books" class="book">
-    <h3>{{ book.title }}</h3>
-    <p>{{ book.author }}</p>
-    <p>{{ book.genre }}</p> <!-- Mostrar el género -->
-    <p>{{ book.description }}</p>
-    <p>{{ book.price | currency }}</p>
-    <a [routerLink]="['/books', book._id]">View Details</a>
-    <button (click)="addToCart(book)">Add to Cart</button>
+<div class="books-container">
+    <div *ngFor="let book of books" class="book-card">
+      <img [src]="book.imageUrl" alt="{{ book.title }}" *ngIf="book.imageUrl" class="book-image">
+      <div class="book-details">
+        <h3>{{ book.title }}</h3>
+        <p class="book-price">{{ book.price | currency }}</p>
+        <p class="book-genre">Genre: {{ book.genre }}</p>
+        <p class="book-description">{{ book.description }}</p>
+        <a [routerLink]="['/books', book._id]" class="view-details">View Details</a>
+        <button (click)="addToCart(book)" class="add-to-cart-button">Add to Cart</button>
+      </div>
+    </div>
   </div>
   

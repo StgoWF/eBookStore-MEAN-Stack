@@ -1,4 +1,3 @@
-// server/models/Book.js
 const mongoose = require('mongoose');
 
 const bookSchema = new mongoose.Schema({
@@ -6,7 +5,8 @@ const bookSchema = new mongoose.Schema({
   author: { type: String, required: true },
   genre: { type: String, required: true },
   price: { type: Number, required: true },
-  description: { type: String, required: true }
+  description: { type: String, required: true },
+  imageUrl: { type: String } // Nuevo campo para la URL de la imagen
 });
 
 module.exports = mongoose.model('Book', bookSchema);

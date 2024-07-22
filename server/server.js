@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const admin = require('./firebase-admin'); // Importa firebase-admin
 const jwt = require('jsonwebtoken'); // Asegúrate de tener esta línea
+const seedBooks = require('./seed'); // Importa la función seedBooks
 
 const userRoutes = require('./routes/userRoutes');
 const bookRoutes = require('./routes/bookRoutes');
@@ -33,9 +34,9 @@ mongoose.connect(process.env.MONGO_URI, {
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+db.once('open', async () => {
   console.log('Connected to MongoDB');
-  seedBooks();  // Llamar a la función seedBooks para insertar datos de prueba
+  await seedBooks(); // Llama a la función seedBooks para insertar datos de prueba
 });
 
 // Middleware para verificar tokens de Firebase y JWT
@@ -80,38 +81,4 @@ app.use('/api/users', userRoutes);
 // Usar las rutas con verificación de token para el carrito
 app.use('/api/cart', verifyToken, cartRoutes);
 
-// Función para insertar datos de prueba
-async function seedBooks() {
-  const Book = require('./models/Book'); // Asegúrate de importar el modelo aquí
-  const books = [
-    {
-      title: 'The Great Gatsby',
-      author: 'F. Scott Fitzgerald',
-      genre: 'Fiction',
-      price: 10.99,
-      description: 'A novel set in the Jazz Age on Long Island, near New York City.',
-    },
-    {
-      title: 'To Kill a Mockingbird',
-      author: 'Harper Lee',
-      genre: 'Fiction',
-      price: 8.99,
-      description: 'A novel about the serious issues of rape and racial inequality.',
-    },
-    {
-      title: '1984',
-      author: 'George Orwell',
-      genre: 'Dystopian',
-      price: 9.99,
-      description: 'A novel that tells the story of a dystopian society under totalitarian rule.',
-    },
-  ];
-
-  try {
-    await Book.deleteMany({}); // Elimina todos los libros existentes
-    await Book.insertMany(books); // Inserta los libros de prueba
-    console.log('Seed data inserted successfully');
-  } catch (err) {
-    console.error('Error inserting seed data:', err);
-  }
-}
+module.exports = app; // Exporta la app para pruebas o usos futuros

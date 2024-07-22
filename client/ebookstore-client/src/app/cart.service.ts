@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
@@ -9,8 +9,13 @@ import { UserService } from './user.service';
 })
 export class CartService {
   private apiUrl = 'http://localhost:5001/api/cart';
+  private cartSubject = new BehaviorSubject<any>({ items: [] });
+  cart$ = this.cartSubject.asObservable();
 
-  constructor(private http: HttpClient, private userService: UserService) {}
+  constructor(
+    private http: HttpClient,
+    private userService: UserService
+  ) {}
 
   private getHeaders(): HttpHeaders {
     const token = this.userService.getToken();
@@ -19,9 +24,12 @@ export class CartService {
 
   getCart(): Observable<any> {
     const headers = this.getHeaders();
-    console.log('Headers:', headers); // Log para verificar los headers
     return this.http.get(this.apiUrl, { headers }).pipe(
-      tap(response => console.log('getCart response:', response)), // Log para verificar la respuesta
+      tap(response => {
+        const groupedCart = this.groupCartItems(response);
+        this.cartSubject.next(groupedCart);
+        console.log('getCart response:', response);
+      }),
       catchError(this.handleError)
     );
   }
@@ -29,7 +37,21 @@ export class CartService {
   addToCart(bookId: string, quantity: number): Observable<any> {
     const headers = this.getHeaders();
     return this.http.post(this.apiUrl, { bookId, quantity }, { headers }).pipe(
-      tap(response => console.log('addToCart response:', response)), // Log para verificar la respuesta
+      tap(response => {
+        this.getCart().subscribe();
+        console.log('addToCart response:', response);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  updateCartItem(bookId: string, quantity: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put(`${this.apiUrl}/item/${bookId}`, { quantity }, { headers }).pipe(
+      tap(response => {
+        this.getCart().subscribe();
+        console.log('updateCartItem response:', response);
+      }),
       catchError(this.handleError)
     );
   }
@@ -37,7 +59,10 @@ export class CartService {
   removeItemFromCart(bookId: string): Observable<any> {
     const headers = this.getHeaders();
     return this.http.delete(`${this.apiUrl}/item/${bookId}`, { headers }).pipe(
-      tap(response => console.log('removeItemFromCart response:', response)), // Log para verificar la respuesta
+      tap(response => {
+        this.getCart().subscribe();
+        console.log('removeItemFromCart response:', response);
+      }),
       catchError(this.handleError)
     );
   }
@@ -45,7 +70,10 @@ export class CartService {
   clearCart(): Observable<any> {
     const headers = this.getHeaders();
     return this.http.delete(this.apiUrl, { headers }).pipe(
-      tap(response => console.log('clearCart response:', response)), // Log para verificar la respuesta
+      tap(response => {
+        this.getCart().subscribe();
+        console.log('clearCart response:', response);
+      }),
       catchError(this.handleError)
     );
   }
@@ -53,5 +81,18 @@ export class CartService {
   private handleError(error: any) {
     console.error('An error occurred:', error);
     return throwError(() => new Error('Something went wrong; please try again later.'));
+  }
+
+  private groupCartItems(cart: any): any {
+    const groupedItems = cart.items.reduce((acc: any, item: any) => {
+      const existingItem = acc.find((i: any) => i.book._id === item.book._id);
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+      } else {
+        acc.push({ ...item });
+      }
+      return acc;
+    }, []);
+    return { ...cart, items: groupedItems };
   }
 }

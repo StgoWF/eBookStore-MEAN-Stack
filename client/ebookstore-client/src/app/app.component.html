@@ -1,14 +1,20 @@
-<!-- src/app/app.component.html -->
 <nav class="navbar">
   <div class="navbar-container">
-    <a href="#" class="navbar-brand"><i class="fas fa-book"></i> EbookEmporium</a>
+    <a href="#" class="navbar-brand">
+      <i class="fas fa-book"></i> EbookEmporium
+    </a>
     <div class="navbar-links">
       <a routerLink="/books">Books</a>
       <a routerLink="/cart">Cart</a>
       <a *ngIf="!isLoggedIn" routerLink="/register">Register</a>
       <a *ngIf="!isLoggedIn" routerLink="/login">Login</a>
       <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
+      <button class="cart-button" (click)="toggleCartSidebar()">
+        <i class="fas fa-shopping-cart"></i>
+      </button>
     </div>
   </div>
 </nav>
 <router-outlet></router-outlet>
+<app-cart-sidebar [isOpen]="isCartSidebarOpen"></app-cart-sidebar>
+<app-notification-modal #notificationModal></app-notification-modal>

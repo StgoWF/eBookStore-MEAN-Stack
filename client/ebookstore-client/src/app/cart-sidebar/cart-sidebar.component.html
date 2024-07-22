@@ -1,0 +1,30 @@
+<div class="cart-sidebar" [class.open]="isOpen">
+    <div class="cart-sidebar-header">
+      <h2>Shopping Cart</h2>
+      <button class="close-btn" (click)="closeCart()">×</button>
+    </div>
+    <div *ngIf="cart && cart.items.length > 0" class="cart-content">
+      <ul>
+        <li *ngFor="let item of cart.items" class="cart-item">
+          <img [src]="item.book.imageUrl" alt="{{ item.book.title }}" class="cart-item-image" />
+          <div class="cart-item-details">
+            <h4>{{ item.book.title }}</h4>
+            <p>{{ item.book.price | currency }}</p>
+            <div class="cart-item-actions">
+              <input type="number" [(ngModel)]="item.quantity" (change)="updateQuantity(item.book._id, item.quantity)" min="1" class="quantity-input" />
+              <button (click)="removeFromCart(item.book._id)" class="remove-btn">Remove</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="cart-footer">
+        <p>Total: {{ getTotal() | currency }}</p>
+        <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
+        <button (click)="checkout()" class="checkout-btn">Checkout</button>
+      </div>
+    </div>
+    <div *ngIf="cart && cart.items.length === 0" class="empty-cart-message">
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  
