@@ -39,12 +39,24 @@ export class AppComponent implements OnInit {
 
   loadCart() {
     this.cartService.getCart().subscribe((cart) => {
-      this.cart = cart;
+      console.log('Cart data:', cart); // Verifica la estructura de los datos aquí
+      if (cart && cart.items) {
+        this.cart = cart;
+      } else {
+        console.error('Invalid cart structure:', cart);
+      }
+    }, error => {
+      console.error('Error loading cart:', error);
     });
   }
+  
 
   logout() {
     this.authService.logout();
     this.isLoggedIn = false;
+  }
+
+  onCartClose() {
+    this.isCartSidebarOpen = false;
   }
 }

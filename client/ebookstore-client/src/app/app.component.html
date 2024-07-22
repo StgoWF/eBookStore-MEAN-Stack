@@ -16,5 +16,5 @@
   </div>
 </nav>
 <router-outlet></router-outlet>
-<app-cart-sidebar [isOpen]="isCartSidebarOpen"></app-cart-sidebar>
+<app-cart-sidebar [isOpen]="isCartSidebarOpen" (close)="onCartClose()"></app-cart-sidebar>
 <app-notification-modal #notificationModal></app-notification-modal>

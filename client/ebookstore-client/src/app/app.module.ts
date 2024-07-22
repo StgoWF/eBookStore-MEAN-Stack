@@ -13,7 +13,8 @@ import { CartComponent } from './cart/cart.component';
 import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 import { TokenInterceptor } from './token.interceptor';
 import { NotificationModalComponent } from './notification-modal/notification-modal.component';
-import { NotificationService } from './notification.service'; // Importar el servicio de notificación
+import { NotificationService } from './notification.service';
+import { CartService } from './cart.service'; // Asegúrate de importar CartService
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -50,7 +51,8 @@ const appRoutes: Routes = [
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    NotificationService // Proveer el servicio de notificación
+    NotificationService,
+    CartService // Agrega CartService aquí
   ],
   bootstrap: [AppComponent]
 })

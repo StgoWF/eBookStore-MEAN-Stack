@@ -85,6 +85,10 @@ export class CartService {
 
   private groupCartItems(cart: any): any {
     const groupedItems = cart.items.reduce((acc: any, item: any) => {
+      if (!item.book) {
+        console.error('Invalid item structure:', item);
+        return acc;
+      }
       const existingItem = acc.find((i: any) => i.book._id === item.book._id);
       if (existingItem) {
         existingItem.quantity += item.quantity;
@@ -95,4 +99,5 @@ export class CartService {
     }, []);
     return { ...cart, items: groupedItems };
   }
+  
 }

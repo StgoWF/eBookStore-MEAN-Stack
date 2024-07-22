@@ -1,5 +1,4 @@
-// src/app/cart-sidebar/cart-sidebar.component.ts
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { CartService } from '../cart.service';
 
 @Component({
@@ -9,6 +8,7 @@ import { CartService } from '../cart.service';
 })
 export class CartSidebarComponent implements OnInit {
   @Input() isOpen: boolean = false;
+  @Output() close = new EventEmitter<void>();
   cart: any = { items: [] };
 
   constructor(private cartService: CartService) {}
@@ -42,5 +42,6 @@ export class CartSidebarComponent implements OnInit {
 
   closeCart() {
     this.isOpen = false;
+    this.close.emit();
   }
 }
