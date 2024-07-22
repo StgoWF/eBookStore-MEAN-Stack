@@ -34,6 +34,14 @@ export class CartService {
     );
   }
 
+  removeItemFromCart(bookId: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.delete(`${this.apiUrl}/item/${bookId}`, { headers }).pipe(
+      tap(response => console.log('removeItemFromCart response:', response)), // Log para verificar la respuesta
+      catchError(this.handleError)
+    );
+  }
+
   clearCart(): Observable<any> {
     const headers = this.getHeaders();
     return this.http.delete(this.apiUrl, { headers }).pipe(

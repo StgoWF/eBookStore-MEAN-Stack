@@ -3,13 +3,14 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import firebase from 'firebase/compat/app';
 import { HttpClient } from '@angular/common/http';
 import { tap, map } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = 'http://localhost:5001/api/users';
+  private authStatus = new BehaviorSubject<boolean>(this.isTokenPresent());
 
   constructor(private afAuth: AngularFireAuth, private http: HttpClient) {}
 
@@ -21,6 +22,7 @@ export class AuthService {
           response => {
             localStorage.setItem('token', response.token);
             localStorage.setItem('userId', response.userId);
+            this.authStatus.next(true);  // Actualizar el estado de autenticación
           },
           error => {
             console.error('Error al autenticar con Firebase:', error);
@@ -40,6 +42,7 @@ export class AuthService {
           response => {
             localStorage.setItem('token', response.token);
             localStorage.setItem('userId', response.userId);
+            this.authStatus.next(true);  // Actualizar el estado de autenticación
           },
           error => {
             console.error('Error al autenticar con Firebase:', error);
@@ -60,6 +63,7 @@ export class AuthService {
       tap((response: any) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('userId', response.userId);
+        this.authStatus.next(true);  // Actualizar el estado de autenticación
       })
     );
   }
@@ -76,17 +80,15 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('firebaseToken');
     localStorage.removeItem('userId');
+    this.authStatus.next(false);  // Actualizar el estado de autenticación
     return this.afAuth.signOut();
   }
 
   isLoggedIn(): Observable<boolean> {
-    const token = this.getToken();
-    if (token) {
-      return of(true);
-    } else {
-      return this.afAuth.authState.pipe(
-        map(user => !!user)
-      );
-    }
+    return this.authStatus.asObservable();
+  }
+
+  private isTokenPresent(): boolean {
+    return !!this.getToken();
   }
 }
