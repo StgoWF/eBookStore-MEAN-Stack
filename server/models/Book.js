@@ -6,7 +6,10 @@ const bookSchema = new mongoose.Schema({
   genre: { type: String, required: true },
   price: { type: Number, required: true },
   description: { type: String, required: true },
-  imageUrl: { type: String } // Nuevo campo para la URL de la imagen
+  imageUrl: { type: String },
+  authors: { type: [String] },  // Agregar autores
+  publishedDate: { type: String }, // Agregar fecha de publicación
+  categories: { type: [String] }   // Agregar categorías
 });
 
 module.exports = mongoose.model('Book', bookSchema);

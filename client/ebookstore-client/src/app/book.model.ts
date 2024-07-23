@@ -3,9 +3,12 @@ export interface Book {
     _id: string;
     title: string;
     author: string;
-    genre: string; // Incluye el campo genre
+    genre: string;
     price: number;
     description: string;
-    imageUrl?: string; // Nuevo campo para la URL de la imagen
+    imageUrl: string;
+    authors?: string[];  // Propiedad opcional
+    publishedDate?: string; // Propiedad opcional
+    categories?: string[];  // Propiedad opcional
   }
   

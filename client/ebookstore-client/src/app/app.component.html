@@ -5,7 +5,6 @@
     </a>
     <div class="navbar-links">
       <a routerLink="/books">Books</a>
-      <a routerLink="/cart">Cart</a>
       <a *ngIf="!isLoggedIn" routerLink="/register">Register</a>
       <a *ngIf="!isLoggedIn" routerLink="/login">Login</a>
       <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>

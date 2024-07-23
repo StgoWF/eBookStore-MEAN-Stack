@@ -1,7 +1,9 @@
+// src/app/book-list/book-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { BookService } from '../book.service';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
+import { Book } from '../book.model';
 
 @Component({
   selector: 'app-book-list',
@@ -9,8 +11,10 @@ import { NotificationService } from '../notification.service';
   styleUrls: ['./book-list.component.css']
 })
 export class BookListComponent implements OnInit {
-  books: any[] = [];
+  books: Book[] = [];
   errorMessage: string = '';
+  selectedBook: Book | null = null;
+  isBookDetailModalOpen: boolean = false;
 
   constructor(
     private bookService: BookService,
@@ -43,5 +47,23 @@ export class BookListComponent implements OnInit {
         console.error(error);
       }
     });
+  }
+
+  openBookDetailModal(bookId: string): void {
+    this.bookService.getBookById(bookId).subscribe({
+      next: (book) => {
+        console.log('Loaded book:', book);
+        this.selectedBook = book;
+        this.isBookDetailModalOpen = true;
+      },
+      error: (error) => {
+        this.notificationService.showNotification('Failed to load book details');
+        console.error(error);
+      }
+    });
+  }
+
+  closeBookDetailModal(): void {
+    this.isBookDetailModalOpen = false;
   }
 }

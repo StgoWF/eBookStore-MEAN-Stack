@@ -1,3 +1,4 @@
+// src/app/app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -11,10 +12,11 @@ import { BookListComponent } from './book-list/book-list.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
-import { TokenInterceptor } from './token.interceptor';
 import { NotificationModalComponent } from './notification-modal/notification-modal.component';
+import { BookDetailModalComponent } from './book-detail-modal/book-detail-modal.component';
+
+import { TokenInterceptor } from './token.interceptor';
 import { NotificationService } from './notification.service';
-import { CartService } from './cart.service'; // Asegúrate de importar CartService
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -39,7 +41,8 @@ const appRoutes: Routes = [
     BookDetailComponent,
     CartComponent,
     CartSidebarComponent,
-    NotificationModalComponent
+    NotificationModalComponent,
+    BookDetailModalComponent
   ],
   imports: [
     BrowserModule,
@@ -51,8 +54,7 @@ const appRoutes: Routes = [
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
-    NotificationService,
-    CartService // Agrega CartService aquí
+    NotificationService
   ],
   bootstrap: [AppComponent]
 })

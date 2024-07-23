@@ -1,3 +1,4 @@
+<!-- src/app/book-list/book-list.component.html -->
 <div class="books-container">
     <div *ngFor="let book of books" class="book-card">
       <img [src]="book.imageUrl" alt="{{ book.title }}" *ngIf="book.imageUrl" class="book-image">
@@ -6,9 +7,17 @@
         <p class="book-price">{{ book.price | currency }}</p>
         <p class="book-genre">Genre: {{ book.genre }}</p>
         <p class="book-description">{{ book.description }}</p>
-        <a [routerLink]="['/books', book._id]" class="view-details">View Details</a>
-        <button (click)="addToCart(book)" class="add-to-cart-button">Add to Cart</button>
+      </div>
+      <div class="button-container">
+        <button (click)="addToCart(book._id)" class="add-to-cart-button">Add to Cart</button>
+        <button (click)="openBookDetailModal(book._id)" class="view-details">View Details</button>
       </div>
     </div>
   </div>
+  
+  <app-book-detail-modal
+    [isOpen]="isBookDetailModalOpen"
+    [book]="selectedBook"
+    (close)="closeBookDetailModal()">
+  </app-book-detail-modal>
   

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router'; // Importa Router
 import { CartService } from '../cart.service';
 
 @Component({
@@ -11,7 +12,7 @@ export class CartSidebarComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   cart: any = { items: [] };
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private router: Router) {} // Inyecta Router
 
   ngOnInit() {
     this.cartService.cart$.subscribe((cart) => {
@@ -43,5 +44,10 @@ export class CartSidebarComponent implements OnInit {
   closeCart() {
     this.isOpen = false;
     this.close.emit();
+  }
+
+  goToCart() {
+    this.closeCart();
+    this.router.navigate(['/cart']);
   }
 }

@@ -4,7 +4,7 @@
       <button class="close-btn" (click)="closeCart()">×</button>
     </div>
     <div *ngIf="cart && cart.items.length > 0" class="cart-content">
-      <ul>
+      <ul class="cart-items">
         <li *ngFor="let item of cart.items" class="cart-item">
           <img [src]="item.book.imageUrl" alt="{{ item.book.title }}" class="cart-item-image" />
           <div class="cart-item-details">
@@ -21,6 +21,7 @@
         <p>Total: {{ getTotal() | currency }}</p>
         <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
         <button (click)="checkout()" class="checkout-btn">Checkout</button>
+        <button routerLink="/cart" class="go-to-cart-btn">Go to Cart</button> <!-- Nuevo botón -->
       </div>
     </div>
     <div *ngIf="cart && cart.items.length === 0" class="empty-cart-message">

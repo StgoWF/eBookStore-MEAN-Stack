@@ -1,8 +1,8 @@
-// src/app/book.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Book } from './book.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,20 +12,20 @@ export class BookService {
 
   constructor(private http: HttpClient) { }
 
-  getBooks(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
+  getBooks(): Observable<Book[]> {
+    return this.http.get<Book[]>(this.apiUrl).pipe(
       catchError(this.handleError)
     );
   }
 
-  getBookById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+  getBookById(id: string): Observable<Book> {
+    return this.http.get<Book>(`${this.apiUrl}/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  addBook(book: any): Observable<any> {
-    return this.http.post(this.apiUrl, book).pipe(
+  addBook(book: Book): Observable<Book> {
+    return this.http.post<Book>(this.apiUrl, book).pipe(
       catchError(this.handleError)
     );
   }

@@ -3,20 +3,25 @@ body {
     margin: 0;
     font-family: 'Roboto', sans-serif;
     background-color: #f4f4f9;
+    padding-top: 70px; /* Ajusta el valor según la altura del navbar */
   }
   
   /* Navbar Styles */
   .navbar {
-    background-color: #343a40;
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
   }
   
   .navbar-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1200px;
     margin: 0 auto;
   }
   
@@ -86,5 +91,10 @@ body {
       width: 100%;
       text-align: center;
     }
+  }
+  
+  /* Margin between navbar and content */
+  main {
+    padding-top: 70px; /* Ajusta el valor según la altura del navbar */
   }
   
