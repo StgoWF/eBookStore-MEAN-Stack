@@ -5,6 +5,8 @@
 </div>
 
 <div *ngIf="cart && cart.items.length > 0" class="cart-container">
+  <div class="cart-header">
+  </div>
   <ul class="cart-items">
     <li *ngFor="let item of cart.items" class="cart-item">
       <div *ngIf="item.book" class="cart-item-details">
@@ -34,11 +36,11 @@
     </li>
   </ul>
   <div class="cart-footer">
+    <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
+
     <p>Total: {{ getTotal() | currency }}</p>
-    <div class="cart-footer-buttons">
-      <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
-      <button (click)="checkout()" class="checkout-btn">Checkout</button>
-    </div>
+    <!-- Contenedor para el botón de PayPal -->
+    <div id="paypal-button-container"></div>
   </div>
 </div>
 

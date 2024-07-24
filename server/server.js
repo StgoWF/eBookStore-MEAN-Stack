@@ -2,13 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const admin = require('./firebase-admin'); // Importa firebase-admin
-const jwt = require('jsonwebtoken'); // Asegúrate de tener esta línea
-const seedBooks = require('./seed'); // Importa la función seedBooks
+const admin = require('./firebase-admin');
+const jwt = require('jsonwebtoken');
+const seedBooks = require('./seed');
 
 const userRoutes = require('./routes/userRoutes');
 const bookRoutes = require('./routes/bookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const paymentRoutes = require('./routes/payment'); // Importa las rutas de pago
 
 const app = express();
 
@@ -26,7 +27,6 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-// Conectar a MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -39,7 +39,6 @@ db.once('open', async () => {
   await seedBooks(); // Llama a la función seedBooks para insertar datos de prueba
 });
 
-// Middleware para verificar tokens de Firebase y JWT
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -53,17 +52,15 @@ const verifyToken = async (req, res, next) => {
   }
 
   try {
-    // Primero intenta verificar el token como un token de Firebase
     const decodedFirebaseToken = await admin.auth().verifyIdToken(token);
     console.log('Firebase token verified:', decodedFirebaseToken);
-    req.user = { id: decodedFirebaseToken.uid }; // Usar uid como id del usuario
+    req.user = { id: decodedFirebaseToken.uid };
     return next();
   } catch (error) {
     console.log('Firebase token verification failed:', error.message);
   }
 
   try {
-    // Si falla, intenta verificar el token como un token JWT local
     const decodedJwtToken = jwt.verify(token, process.env.JWT_SECRET);
     console.log('JWT token verified:', decodedJwtToken);
     req.user = decodedJwtToken;
@@ -74,11 +71,9 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-// Usar las rutas sin verificación de token para libros y autenticación
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
-
-// Usar las rutas con verificación de token para el carrito
 app.use('/api/cart', verifyToken, cartRoutes);
+app.use('/api/payment', paymentRoutes); // Asegúrate de que esta línea esté correcta
 
-module.exports = app; // Exporta la app para pruebas o usos futuros
+module.exports = app;

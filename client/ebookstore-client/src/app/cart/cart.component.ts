@@ -1,23 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
+import { Router } from '@angular/router';
+
+declare var paypal: any;
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
-export class CartComponent implements OnInit {
-  cart: any = null;
+export class CartComponent implements OnInit, AfterViewInit {
+  cart: any = { items: [] };
   errorMessage: string = '';
 
   constructor(
     private cartService: CartService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadCart();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.initializePaypal();
+    }, 0);
   }
 
   loadCart(): void {
@@ -25,6 +35,9 @@ export class CartComponent implements OnInit {
       cart => {
         this.cart = cart;
         console.log('Cart loaded:', cart);
+        setTimeout(() => {
+          this.initializePaypal();
+        }, 0);
       },
       error => {
         this.errorMessage = error.message;
@@ -36,9 +49,9 @@ export class CartComponent implements OnInit {
   clearCart(): void {
     this.cartService.clearCart().subscribe(
       () => {
-        this.cart = { items: [] };
         this.notificationService.showNotification('Cart cleared!');
         console.log('Cart cleared');
+        this.loadCart();
       },
       error => {
         this.errorMessage = error.message;
@@ -64,24 +77,32 @@ export class CartComponent implements OnInit {
   }
 
   updateQuantity(bookId: string, quantity: number): void {
+    if (!bookId) {
+      console.error('Book ID is undefined');
+      return;
+    }
     this.cartService.updateCartItem(bookId, quantity).subscribe(
-      cart => {
-        this.cart = cart;
-        console.log('Cart updated:', cart);
+      () => {
+        console.log('Quantity updated');
+        this.loadCart();
       },
       error => {
         this.errorMessage = error.message;
-        console.error('Error updating cart:', error);
+        console.error('Error updating quantity:', error);
       }
     );
   }
 
   removeFromCart(bookId: string): void {
+    if (!bookId) {
+      console.error('Book ID is undefined');
+      return;
+    }
     this.cartService.removeItemFromCart(bookId).subscribe(
-      cart => {
-        this.cart = cart;
+      () => {
         this.notificationService.showNotification('Book removed from cart!');
-        console.log('Item removed from cart:', cart);
+        console.log('Item removed from cart');
+        this.loadCart();
       },
       error => {
         this.errorMessage = error.message;
@@ -91,10 +112,72 @@ export class CartComponent implements OnInit {
   }
 
   getTotal(): number {
-    return this.cart.items.reduce((total: number, item: any) => total + (item.book.price * item.quantity), 0);
+    return parseFloat(this.cart.items.reduce((total: number, item: any) => total + (item.book.price * item.quantity), 0).toFixed(2));
   }
 
-  checkout(): void {
-    alert('Proceeding to checkout...');
+  async initializePaypal(): Promise<void> {
+    const paypalContainer = document.getElementById('paypal-button-container');
+    if (paypalContainer) {
+      paypalContainer.innerHTML = ''; // Limpiar el contenedor antes de renderizar
+      paypal.Buttons({
+        env: 'sandbox', // Asegúrate de que esto está configurado para usar sandbox
+        client: {
+          sandbox: 'AS4Or1-wqmvBkyfj8fC2cnXud-SZWE2jz8t4pEHndW341xHtN_F7jRkkmPPkOPrppph-Rwpat11aptOk', // Reemplaza con tu clientId de sandbox
+        },
+        style: {
+          shape: 'rect',
+          color: 'gold',
+          layout: 'vertical',
+          label: 'paypal',
+          tagline: false,
+          height: 40,
+        },
+        createOrder: (data, actions) => {
+          return actions.order.create({
+            purchase_units: [{
+              amount: {
+                value: this.getTotal().toString()
+              }
+            }]
+          });
+        },
+        onApprove: (data, actions) => {
+          return actions.order.capture().then(async (details) => {
+            console.log('Transaction approved:', details);
+            try {
+              await this.clearCartAsync();
+              this.notificationService.showNotification('Transaction completed by ' + details.payer.name.given_name);
+              this.router.navigate(['/payment-confirmation'], { queryParams: { success: true } });
+            } catch (error) {
+              console.error('Error al limpiar el carrito:', error);
+              this.router.navigate(['/payment-confirmation'], { queryParams: { success: false } });
+            }
+          }).catch(err => {
+            console.error('Error capturando la orden:', err);
+            this.router.navigate(['/payment-confirmation'], { queryParams: { success: false } });
+          });
+        },
+        onError: (err) => {
+          console.error('Error durante la transacción de PayPal', err);
+        }
+      }).render('#paypal-button-container');
+    } else {
+      console.error('Contenedor del botón de PayPal no encontrado');
+    }
+  }
+
+  clearCartAsync(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.cartService.clearCart().subscribe(
+        () => {
+          console.log('Cart cleared');
+          resolve();
+        },
+        error => {
+          console.error('Error clearing cart:', error);
+          reject(error);
+        }
+      );
+    });
   }
 }

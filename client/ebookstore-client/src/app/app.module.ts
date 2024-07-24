@@ -1,15 +1,16 @@
-// src/app/app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
+
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { BookListComponent } from './book-list/book-list.component';
-import { BookDetailComponent } from './book-detail/book-detail.component';
 import { CartComponent } from './cart/cart.component';
 import { CartSidebarComponent } from './cart-sidebar/cart-sidebar.component';
 import { NotificationModalComponent } from './notification-modal/notification-modal.component';
@@ -26,7 +27,6 @@ const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'books', component: BookListComponent },
-  { path: 'books/:id', component: BookDetailComponent },
   { path: 'cart', component: CartComponent },
   { path: '', redirectTo: '/books', pathMatch: 'full' },
   { path: '**', redirectTo: '/books' }
@@ -38,7 +38,6 @@ const appRoutes: Routes = [
     LoginComponent,
     RegisterComponent,
     BookListComponent,
-    BookDetailComponent,
     CartComponent,
     CartSidebarComponent,
     NotificationModalComponent,
@@ -46,11 +45,14 @@ const appRoutes: Routes = [
   ],
   imports: [
     BrowserModule,
-    FormsModule,
+    BrowserAnimationsModule,
+    FormsModule, // Asegúrate de que FormsModule esté importado aquí
     HttpClientModule,
     RouterModule.forRoot(appRoutes),
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    SlickCarouselModule,
+
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },

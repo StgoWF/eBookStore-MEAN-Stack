@@ -1,14 +1,36 @@
+// src/server/routes/bookRoutes.js
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book');
 const getBookImage = require('../services/bookImageService');
 const getBookDetails = require('../services/bookDetailService');
 
-// Obtener todos los libros
+// Obtener todas las categorías
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Book.distinct('genre');
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Obtener todos los libros con paginación
 router.get('/', async (req, res) => {
   try {
-    const books = await Book.find();
-    res.json(books);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 8; // Cambia el valor predeterminado según tus necesidades
+    const skip = (page - 1) * limit;
+
+    const books = await Book.find().skip(skip).limit(limit);
+    const totalBooks = await Book.countDocuments();
+    
+    res.json({
+      books,
+      totalBooks,
+      totalPages: Math.ceil(totalBooks / limit),
+      currentPage: page
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

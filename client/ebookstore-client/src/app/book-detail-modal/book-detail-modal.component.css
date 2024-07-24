@@ -1,80 +1,187 @@
-.book-detail-modal {
+/* src/app/book-detail-modal/book-detail-modal.component.css */
+::ng-deep .book-detail-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  
+  ::ng-deep .book-detail-modal.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  ::ng-deep .modal-content {
+    background: #fcf7f7;
+    border-radius: 10px;
+    max-width: 400px; /* Ajuste del ancho máximo */
+    width: 90%; /* Asegura que se ajuste a pantallas más pequeñas */
+    padding: 20px;
+    box-shadow: 0 2px 10px #0000001a;
+    overflow-y: auto;
+    max-height: 80%;
+  }
+  
+  ::ng-deep .modal-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  ::ng-deep .close-btn {
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition: background 0.3s ease;
   }
   
-  .book-detail-modal.open {
-    opacity: 1;
-    visibility: visible;
+  ::ng-deep .close-btn:hover {
+    background: rgba(0, 0, 0, 0.2);
   }
   
-  .modal-content {
-    background-color: white;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 80vh;
+  ::ng-deep .modal-body {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    color: #333;
   }
   
-  .modal-header {
+  ::ng-deep .book-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  
+  ::ng-deep .book-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+  
+  ::ng-deep h2 {
+    margin-top: 0;
+    color: #333;
+    text-align: center;
+  }
+  
+  ::ng-deep .details-section {
+    margin-bottom: 20px;
+  }
+  
+  ::ng-deep .details-section p {
+    margin: 5px 0;
+  }
+  
+  ::ng-deep .price-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  ::ng-deep .actions-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  ::ng-deep .quantity-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd;
+    gap: 5px;
   }
   
-  .book-image {
-    width: 100px;
-    height: auto;
-    border-radius: 5px;
-  }
-  
-  .close-btn {
-    background: none;
+  ::ng-deep .quantity-btn {
+    background: #ddd;
+    color: #333;
     border: none;
-    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    font-size: 1.2rem;
   }
   
-  .modal-body {
-    padding: 1rem;
-    overflow-y: auto;
+  ::ng-deep .quantity-btn:hover {
+    background: #ccc;
+  }
+  
+  ::ng-deep .quantity-container span {
+    margin: 0 10px;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  ::ng-deep .add-to-cart-button {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.3s ease;
     flex-grow: 1;
+    text-align: center;
   }
   
-  .modal-body h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
+  ::ng-deep .add-to-cart-button:hover {
+    background: #555;
   }
   
-  .modal-body p {
-    margin-bottom: 0.5rem;
+  ::ng-deep .section-title {
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 10px;
   }
   
-  @media (max-width: 768px) {
-    .modal-content {
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-    }
+  ::ng-deep .section-divider {
+    border-bottom: 1px solid #ddd;
+    margin: 15px 0;
+  }
   
-    .modal-body {
-      padding: 1rem;
-    }
+  ::ng-deep .detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  ::ng-deep .detail-item p {
+    margin: 0;
+  }
+  
+  ::ng-deep .section-divider {
+    border-bottom: 1px solid #ddd;
+    margin: 10px 0;
   }
   

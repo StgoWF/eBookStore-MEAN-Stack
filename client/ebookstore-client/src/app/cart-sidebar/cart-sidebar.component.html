@@ -20,8 +20,7 @@
       <div class="cart-footer">
         <p>Total: {{ getTotal() | currency }}</p>
         <button (click)="clearCart()" class="clear-cart-btn">Clear Cart</button>
-        <button (click)="checkout()" class="checkout-btn">Checkout</button>
-        <button routerLink="/cart" class="go-to-cart-btn">Go to Cart</button> <!-- Nuevo botón -->
+        <button (click)="goToCart()" class="go-to-cart-btn">Go to Cart</button>
       </div>
     </div>
     <div *ngIf="cart && cart.items.length === 0" class="empty-cart-message">

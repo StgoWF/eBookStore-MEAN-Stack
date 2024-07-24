@@ -5,142 +5,154 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  h1 {
+    margin: 20px auto; /* Añadido margen superior */
+}
+
+h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 2em;
     color: #333;
-  }
-  
-  .error-message {
+}
+
+.error-message {
     color: red;
     text-align: center;
     margin-bottom: 20px;
-  }
-  
-  /* Cart items styles */
-  .cart-items {
+}
+
+.cart-items {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-  
-  .cart-item {
+}
+
+.cart-item {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #eee;
     padding: 10px 0;
-  }
-  
-  .cart-item-details {
+}
+
+.cart-item-details {
     display: flex;
     align-items: center;
     width: 100%;
-  }
-  
-  .book-image {
+}
+
+.book-image {
     width: 80px;
     height: auto;
     margin-right: 20px;
-  }
-  
-  .cart-item-info {
+}
+
+.cart-item-info {
     flex-grow: 1;
-  }
-  
-  .cart-item-info h3 {
+}
+
+.cart-item-info h3 {
     margin: 0;
     font-size: 1.2em;
     color: #333;
-  }
-  
-  .cart-item-info p {
+}
+
+.cart-item-info p {
     margin: 5px 0;
     color: #666;
-  }
-  
-  .cart-item-actions {
+}
+
+.cart-item-actions {
     display: flex;
     align-items: center;
-  }
-  
-  .quantity-input {
+}
+
+.quantity-input {
     width: 50px;
     padding: 5px;
     margin: 0 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     text-align: center;
-  }
-  
-  button {
+}
+
+button {
     padding: 5px 10px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-  }
-  
-  button:focus {
+}
+
+button:focus {
     outline: none;
-  }
-  
-  button:hover {
+}
+
+button:hover {
     opacity: 0.9;
-  }
-  
-  .remove-btn {
+}
+
+.remove-btn {
     background-color: #e74c3c;
     color: white;
-  }
-  
-  .remove-btn:hover {
+}
+
+.remove-btn:hover {
     background-color: #c0392b;
-  }
-  
-  /* Cart footer styles */
-  .cart-footer {
+}
+
+.cart-footer {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
     padding: 20px 0;
     border-top: 1px solid #eee;
-  }
-  
-  .cart-footer p {
+}
+
+.cart-footer p {
     font-size: 1.2em;
     color: #333;
-  }
-  
-  .cart-footer-buttons {
+    margin-bottom: 20px;
+}
+
+.cart-footer-buttons {
     display: flex;
     gap: 10px;
-  }
-  
-  .clear-cart-btn {
+}
+
+.clear-cart-btn {
     background-color: #f39c12;
     color: white;
-  }
-  
-  .clear-cart-btn:hover {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px; /* Añadir margen superior */
+    align-self: flex-start; /* Alinear a la derecha */
+}
+
+.clear-cart-btn:hover {
     background-color: #e67e22;
-  }
-  
-  .checkout-btn {
-    background-color: #2ecc71;
-    color: white;
-  }
-  
-  .checkout-btn:hover {
-    background-color: #27ae60;
-  }
-  
-  /* Empty cart message styles */
-  .empty-cart-message {
+}
+
+.empty-cart-message {
     text-align: center;
     color: #666;
-  }
-  
+}
+
+/* PayPal Buttons Styles */
+#paypal-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#paypal-button-container .paypal-button {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#paypal-button-container .paypal-button .paypal-button-content {
+    font-size: 1.2em;
+    font-weight: bold;
+}

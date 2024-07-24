@@ -207,7 +207,150 @@ const books = [
     genre: 'Magical Realism',
     description: 'A landmark 1967 novel by Colombian author Gabriel García Márquez that tells the multi-generational story of the Buendía family.',
     price: 12.99
-  }
+  },
+  {
+    title: 'Don Quixote',
+    author: 'Miguel de Cervantes',
+    genre: 'Fiction',
+    description: 'A Spanish novel by Miguel de Cervantes. It follows the adventures of a nobleman who reads so many chivalric romances that he loses his sanity and decides to become a knight-errant.',
+    price: 11.99
+  },
+  {
+    title: 'Wuthering Heights',
+    author: 'Emily Brontë',
+    genre: 'Gothic Fiction',
+    description: 'A novel by Emily Brontë published in 1847 under her pseudonym Ellis Bell. The narrative is non-linear, involving several flashbacks, and it focuses on the tragic story of Heathcliff and Catherine Earnshaw.',
+    price: 8.99
+  },
+  {
+    title: 'The Iliad',
+    author: 'Homer',
+    genre: 'Epic',
+    description: 'An ancient Greek epic poem attributed to Homer. It tells the story of the Trojan War and the Greek siege of the city of Troy.',
+    price: 12.99
+  },
+  {
+    title: 'The Metamorphosis',
+    author: 'Franz Kafka',
+    genre: 'Absurdist Fiction',
+    description: 'A novella by Franz Kafka, first published in 1915. It tells the story of a salesman who wakes one morning to find himself inexplicably transformed into a huge insect.',
+    price: 7.99
+  },
+  {
+    title: 'The Stranger',
+    author: 'Albert Camus',
+    genre: 'Philosophical Fiction',
+    description: 'A novel by Albert Camus. Its theme and outlook are often cited as examples of Camus\' philosophy of the absurd and existentialism.',
+    price: 9.99
+  },
+  {
+    title: 'Beloved',
+    author: 'Toni Morrison',
+    genre: 'Historical Fiction',
+    description: 'A novel by Toni Morrison. It is set after the American Civil War and tells the story of a family of former slaves whose Cincinnati home is haunted by a spirit.',
+    price: 10.99
+  },
+  {
+    title: 'The Aeneid',
+    author: 'Virgil',
+    genre: 'Epic',
+    description: 'A Latin epic poem written by Virgil between 29 and 19 BC. It tells the legendary story of Aeneas, a Trojan who travelled to Italy, where he became the ancestor of the Romans.',
+    price: 13.99
+  },
+  {
+    title: 'Madame Bovary',
+    author: 'Gustave Flaubert',
+    genre: 'Literary Realism',
+    description: 'A novel by Gustave Flaubert that focuses on a doctor\'s wife, Emma Bovary, who has adulterous affairs and lives beyond her means in order to escape the banalities and emptiness of provincial life.',
+    price: 8.99
+  },
+  {
+    title: 'The Count of Monte Cristo',
+    author: 'Alexandre Dumas',
+    genre: 'Adventure',
+    description: 'A novel by Alexandre Dumas completed in 1844. It is an adventure story primarily concerned with themes of hope, justice, vengeance, mercy, and forgiveness.',
+    price: 10.99
+  },
+  {
+    title: 'The Scarlet Letter',
+    author: 'Nathaniel Hawthorne',
+    genre: 'Historical Fiction',
+    description: 'A work of historical fiction by American author Nathaniel Hawthorne, published in 1850. It is set in 17th-century Puritan Massachusetts Bay Colony during the years 1642 to 1649.',
+    price: 7.99
+  },
+  {
+    title: 'Mansfield Park',
+    author: 'Jane Austen',
+    genre: 'Romance',
+    description: 'The third published novel by Jane Austen, first published in 1814. The novel tells the story of Fanny Price starting when her overburdened family sends her at age ten to live in the household of her wealthy aunt and uncle.',
+    price: 6.99
+  },
+  {
+    title: 'David Copperfield',
+    author: 'Charles Dickens',
+    genre: 'Fiction',
+    description: 'The eighth novel by Charles Dickens. The novel\'s full title is The Personal History, Adventures, Experience and Observation of David Copperfield the Younger of Blunderstone Rookery (which he never meant to publish on any account).',
+    price: 11.99
+  },
+  {
+    title: 'Les Misérables',
+    author: 'Victor Hugo',
+    genre: 'Historical Fiction',
+    description: 'A French historical novel by Victor Hugo, first published in 1862, that is considered one of the greatest novels of the 19th century.',
+    price: 14.99
+  },
+  {
+    title: 'The Sun Also Rises',
+    author: 'Ernest Hemingway',
+    genre: 'Fiction',
+    description: 'A 1926 novel by American writer Ernest Hemingway. It portrays American and British expatriates who travel from Paris to the Festival of San Fermín in Pamplona to watch the running of the bulls and the bullfights.',
+    price: 9.99
+  },
+  {
+    title: 'The Trial',
+    author: 'Franz Kafka',
+    genre: 'Absurdist Fiction',
+    description: 'A novel written by Franz Kafka between 1914 and 1915 and published posthumously in 1925. The story of a man arrested and prosecuted by a remote, inaccessible authority, with the nature of his crime revealed neither to him nor to the reader.',
+    price: 8.99
+  },
+  {
+    title: 'Fahrenheit 451',
+    author: 'Ray Bradbury',
+    genre: 'Dystopian',
+    description: 'A dystopian novel by American writer Ray Bradbury. It was first published in 1953 and is often regarded as one of his best works.',
+    price: 7.99
+  },
+  {
+    title: 'Animal Farm',
+    author: 'George Orwell',
+    genre: 'Political Satire',
+    description: 'An allegorical novella by George Orwell, first published in England on 17 August 1945. The book tells the story of a group of farm animals who rebel against their human farmer, hoping to create a society where the animals can be equal, free, and happy.',
+    price: 6.99
+  },
+  {
+    title: 'Gone with the Wind',
+    author: 'Margaret Mitchell',
+    genre: 'Historical Fiction',
+    description: 'A novel by American writer Margaret Mitchell, first published in 1936. The story is set in Clayton County and Atlanta, both in Georgia, during the American Civil War and Reconstruction Era.',
+    price: 11.99
+  },
+  {
+    title: 'The Adventures of Huckleberry Finn',
+    author: 'Mark Twain',
+    genre: 'Adventure',
+    description: 'A novel by Mark Twain, first published in the United Kingdom in December 1884 and in the United States in February 1885. Commonly named among the Great American Novels.',
+    price: 8.99
+  },
+  {
+    title: 'The Adventures of Tom Sawyer',
+    author: 'Mark Twain',
+    genre: 'Adventure',
+    description: 'A novel by Mark Twain about a young boy growing up along the Mississippi River. It is set in the 1840s in the fictional town of St. Petersburg, inspired by Hannibal, Missouri, where Twain lived as a boy.',
+    price: 7.99
+  },
+  
+  
+  
 ];
 
 async function seedBooks() {

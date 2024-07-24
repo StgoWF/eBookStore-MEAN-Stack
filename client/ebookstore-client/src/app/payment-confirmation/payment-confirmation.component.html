@@ -1,0 +1,7 @@
+<div *ngIf="isSuccess; else failureTemplate">
+    <p>Payment was successful!</p>
+  </div>
+  <ng-template #failureTemplate>
+    <p>Payment failed. Please try again.</p>
+  </ng-template>
+  
