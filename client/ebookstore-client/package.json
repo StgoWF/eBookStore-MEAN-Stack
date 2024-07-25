@@ -19,6 +19,7 @@
     "@angular/platform-browser": "^18.1.0",
     "@angular/platform-browser-dynamic": "^18.1.0",
     "@angular/router": "^18.1.0",
+    "@paypal/checkout-server-sdk": "^1.0.3",
     "core-js": "^3.37.1",
     "firebase": "^10.12.4",
     "jquery": "^3.7.1",
