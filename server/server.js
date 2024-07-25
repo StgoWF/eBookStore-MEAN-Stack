@@ -2,30 +2,29 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const admin = require('./firebase-admin');
+const path = require('path');
+const admin = require('./server/firebase-admin'); // Adjust the path if necessary
 const jwt = require('jsonwebtoken');
-const seedBooks = require('./seed');
 
-const userRoutes = require('./routes/userRoutes');
-const bookRoutes = require('./routes/bookRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const paymentRoutes = require('./routes/payment'); // Importa las rutas de pago
+const userRoutes = require('./server/routes/userRoutes');
+const bookRoutes = require('./server/routes/bookRoutes');
+const cartRoutes = require('./server/routes/cartRoutes');
+const paymentRoutes = require('./server/routes/paymentRoutes'); // Adjust the path if necessary
 
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: process.env.CLIENT_URL || 'http://localhost:4200',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 
-const PORT = process.env.PORT || 5001;
+// Static file serving for Angular app
+app.use(express.static(path.join(__dirname, 'client/ebookstore-client/dist/ebookstore-client')));
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5001;
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -36,7 +35,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-  await seedBooks(); // Llama a la función seedBooks para insertar datos de prueba
+  await require('./server/seed')(); // Ensure this is correctly defined to insert test data
 });
 
 const verifyToken = async (req, res, next) => {
@@ -74,6 +73,21 @@ const verifyToken = async (req, res, next) => {
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', verifyToken, cartRoutes);
-app.use('/api/payment', paymentRoutes); // Asegúrate de que esta línea esté correcta
+app.use('/api/payment', paymentRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+// Serve Angular app for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/ebookstore-client/dist/ebookstore-client/index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;

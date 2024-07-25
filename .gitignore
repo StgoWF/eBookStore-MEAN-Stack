@@ -149,3 +149,4 @@ node_modules/
 # JetBrains IDEs
 .idea/
 server/serviceAccountKey.json
+server/serviceAccountKey.json
