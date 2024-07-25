@@ -157,3 +157,7 @@ body {
   font-size: 1.5rem;
   cursor: pointer;
 }
+.close-button{
+  position: relative;
+  left: 196px;
+}

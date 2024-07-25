@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { BookService, BooksResponse } from '../book.service';
+// src/app/book-list/book-list.component.ts
+import { Component, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
+import { SearchService } from '../search.service';
 import { Book } from '../book.model';
 import { BookDetailModalComponent } from '../book-detail-modal/book-detail-modal.component';
 
@@ -11,56 +11,45 @@ import { BookDetailModalComponent } from '../book-detail-modal/book-detail-modal
   templateUrl: './book-list.component.html',
   styleUrls: ['./book-list.component.css']
 })
-export class BookListComponent implements OnInit {
+export class BookListComponent implements OnInit, OnChanges {
   @ViewChild('bookDetailModal') bookDetailModal: BookDetailModalComponent;
-  @Input() searchQuery: string = '';
-
   books: Book[] = [];
-  filteredBooks: Book[] = [];
   categories: string[] = [];
-  selectedCategories: string[] = [];
-  errorMessage: string = '';
+  filteredBooks: Book[] = [];
   selectedBook: Book | null = null;
-  itemsPerPage: number = 10;
-  isCategoryDropdownOpen = false;
+  searchQuery: string = '';
+  selectedCategories: string[] = [];
+
+  isCategoryDropdownOpen: boolean = false;
+  isSortDropdownOpen: boolean = false;
 
   constructor(
-    private bookService: BookService,
     private cartService: CartService,
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
-    this.loadCategories();
-    this.loadAllBooks();
-    this.route.queryParams.subscribe(params => {
-      this.searchQuery = params['search'] || '';
+    this.searchService.searchQuery$.subscribe(query => {
+      this.searchQuery = query;
       this.filterBooks();
     });
+    this.searchService.selectedCategories$.subscribe(categories => {
+      this.selectedCategories = categories;
+      this.filterBooks();
+    });
+    this.searchService.books$.subscribe(books => {
+      this.books = books;
+      this.updateCategories();
+      this.filterBooks();
+    });
+    this.filterBooks();
   }
 
-  loadAllBooks(): void {
-    this.bookService.getBooks(1, 1000).subscribe(
-      (response: BooksResponse) => {
-        this.books = response.books;
-        this.filterBooks();
-      },
-      error => {
-        this.errorMessage = error.message;
-      }
-    );
-  }
-
-  loadCategories(): void {
-    this.bookService.getCategories().subscribe(
-      (categories: string[]) => {
-        this.categories = categories;
-      },
-      error => {
-        this.errorMessage = error.message;
-      }
-    );
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.categories || changes.books) {
+      this.filterBooks();
+    }
   }
 
   addToCart(bookId: string): void {
@@ -70,23 +59,16 @@ export class BookListComponent implements OnInit {
       },
       error: (error) => {
         this.notificationService.showNotification('Failed to add book to cart');
-        console.error(error);
       }
     });
   }
 
   openBookDetailModal(bookId: string): void {
-    this.bookService.getBookById(bookId).subscribe({
-      next: (book) => {
-        this.selectedBook = book;
-        this.bookDetailModal.book = book;
-        this.bookDetailModal.isOpen = true;
-      },
-      error: (error) => {
-        this.notificationService.showNotification('Failed to load book details');
-        console.error(error);
-      }
-    });
+    const selectedBook = this.books.find(book => book._id === bookId);
+    if (selectedBook) {
+      this.bookDetailModal.book = selectedBook;
+      this.bookDetailModal.isOpen = true;
+    }
   }
 
   closeBookDetailModal(): void {
@@ -104,35 +86,31 @@ export class BookListComponent implements OnInit {
     this.filterBooks();
   }
 
+  updateCategories(): void {
+    const allCategories = new Set<string>();
+    this.books.forEach(book => allCategories.add(book.genre));
+    this.categories = Array.from(allCategories);
+  }
+
   filterBooks(): void {
-    const filtered = this.books.filter(book => {
+    this.filteredBooks = this.books.filter(book => {
       const matchesSearchQuery = this.searchQuery ? book.title.toLowerCase().includes(this.searchQuery.toLowerCase()) : true;
       const matchesCategory = this.selectedCategories.length ? this.selectedCategories.includes(book.genre) : true;
       return matchesSearchQuery && matchesCategory;
     });
-
-    this.filteredBooks = filtered;
-  }
-
-  searchBooks(): void {
-    this.filterBooks();
   }
 
   toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
   }
 
-  openCategoryModal(): void {
-    const modal = document.getElementById("categoryModal");
-    if (modal) {
-      modal.style.display = "block";
-    }
+  toggleSortDropdown(): void {
+    this.isSortDropdownOpen = !this.isSortDropdownOpen;
   }
 
-  closeCategoryModal(): void {
-    const modal = document.getElementById("categoryModal");
-    if (modal) {
-      modal.style.display = "none";
+  sortBooks(criteria: string): void {
+    if (criteria === 'alphabetical') {
+      this.filteredBooks.sort((a, b) => a.title.localeCompare(b.title));
     }
   }
 }

@@ -4,6 +4,7 @@ import { CartService } from './cart.service';
 import { NotificationModalComponent } from './notification-modal/notification-modal.component';
 import { NotificationService } from './notification.service';
 import { BookService } from './book.service';
+import { SearchService } from './search.service';
 import { Book } from './book.model';
 
 @Component({
@@ -15,11 +16,16 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
   isCartSidebarOpen = false;
   isMenuModalOpen = false;
+  isSortModalOpen = false;
+  isCategoryDropdownOpen = false;
+  isSortDropdownOpen = false;  // Añadir esta línea
+  isMobile = false;
   cart: any = { items: [] };
   searchQuery: string = '';
   books: Book[] = [];
-  filteredBooks: Book[] = [];
   categories: string[] = [];
+  selectedCategories: string[] = [];
+  errorMessage: string = '';
 
   @ViewChild('notificationModal', { static: false }) notificationModal!: NotificationModalComponent;
   @ViewChild('menuModal', { static: false }) menuModal!: ElementRef;
@@ -29,51 +35,50 @@ export class AppComponent implements OnInit {
     private cartService: CartService,
     private notificationService: NotificationService,
     private bookService: BookService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
     this.authService.isLoggedIn().subscribe(isLoggedIn => {
       this.isLoggedIn = isLoggedIn;
-      console.log('User logged in status:', isLoggedIn);
     });
     this.loadCart();
     this.loadBooks();
     this.loadCategories();
+    this.checkIfMobile();
   }
 
   ngAfterViewInit() {
     this.notificationService.registerNotificationModal(this.notificationModal);
-    console.log('Notification modal registered');
 
     this.renderer.listen('document', 'click', (event) => {
       if (this.isMenuModalOpen && !this.menuModal.nativeElement.contains(event.target)) {
         this.closeMenuModal();
-        console.log('Menu modal closed due to outside click');
       }
     });
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    console.log('Window resized to:', window.innerWidth);
+    this.checkIfMobile();
     if (window.innerWidth > 768) {
       this.isMenuModalOpen = false;
-      console.log('Window width > 768, closing menu modal');
     }
+  }
+
+  checkIfMobile() {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   toggleCartSidebar() {
     this.isCartSidebarOpen = !this.isCartSidebarOpen;
-    console.log('Cart sidebar toggled, new state:', this.isCartSidebarOpen);
   }
 
   loadCart() {
     this.cartService.getCart().subscribe((cart) => {
-      console.log('Cart data loaded:', cart); // Verifica la estructura de los datos aquí
       if (cart && cart.items) {
         this.cart = cart;
-        console.log('Cart items set:', this.cart.items);
       } else {
         console.error('Invalid cart structure:', cart);
       }
@@ -83,11 +88,11 @@ export class AppComponent implements OnInit {
   }
 
   loadBooks() {
-    this.bookService.getBooks().subscribe(
+    this.bookService.getBooks(1, 1000).subscribe(
       response => {
+        console.log('Books loaded:', response.books);
         this.books = response.books;
-        this.filteredBooks = response.books;
-        console.log('Books loaded:', this.books);
+        this.searchService.updateBooks(this.books);
       },
       error => {
         console.error('Error loading books:', error);
@@ -98,8 +103,9 @@ export class AppComponent implements OnInit {
   loadCategories() {
     this.bookService.getCategories().subscribe(
       (categories: string[]) => {
+        console.log('Categories loaded:', categories);
         this.categories = categories;
-        console.log('Categories loaded:', this.categories);
+        this.searchService.updateSelectedCategories(this.selectedCategories);
       },
       error => {
         console.error('Error loading categories:', error);
@@ -108,31 +114,59 @@ export class AppComponent implements OnInit {
   }
 
   searchBooks() {
-    this.filteredBooks = this.books.filter(book => 
-      book.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      book.description.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
-    console.log('Filtered books:', this.filteredBooks);
+    console.log('Search query:', this.searchQuery);
+    this.searchService.updateSearchQuery(this.searchQuery);
+  }
+
+  filterByCategory(category: string) {
+    this.selectedCategories = [category];
+    this.searchService.updateSelectedCategories(this.selectedCategories);
+  }
+
+  sortBooks(criteria: string) {
+    if (criteria === 'alphabetical') {
+      this.books.sort((a, b) => a.title.localeCompare(b.title));
+    } 
+    this.searchService.updateBooks(this.books);
   }
 
   logout() {
     this.authService.logout();
     this.isLoggedIn = false;
-    console.log('User logged out');
   }
 
   onCartClose() {
     this.isCartSidebarOpen = false;
-    console.log('Cart sidebar closed');
   }
 
   openMenuModal(): void {
     this.isMenuModalOpen = true;
-    console.log('Menu modal opened');
   }
 
   closeMenuModal(): void {
     this.isMenuModalOpen = false;
-    console.log('Menu modal closed');
+  }
+
+  toggleSortModal(): void {
+    this.isSortModalOpen = !this.isSortModalOpen;
+  }
+
+  toggleSortDropdown(): void {  // Añadir este método
+    this.isSortDropdownOpen = !this.isSortDropdownOpen;
+  }
+
+  toggleCategoryDropdown(): void {
+    this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  onCategoryChange(event: any): void {
+    const category = event.target.value;
+    if (event.target.checked) {
+      this.selectedCategories.push(category);
+    } else {
+      this.selectedCategories = this.selectedCategories.filter(cat => cat !== category);
+    }
+    console.log('Selected categories:', this.selectedCategories);
+    this.searchService.updateSelectedCategories(this.selectedCategories);
   }
 }

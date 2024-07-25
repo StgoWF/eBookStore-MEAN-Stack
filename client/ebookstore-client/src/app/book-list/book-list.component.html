@@ -1,60 +1,33 @@
-<!-- Barra de búsqueda superior y botón de categorías para pantallas pequeñas -->
-<div class="top-search-bar">
-  <input type="text" placeholder="Search for books..." [(ngModel)]="searchQuery" class="top-search-input" />
-  <button (click)="searchBooks()" class="top-search-button">Search</button>
-  <div class="category-dropdown">
-    <button class="category-button" (click)="toggleCategoryDropdown()">
-      Categories <i class="fas fa-chevron-down"></i>
-    </button>
-    <div class="category-list" *ngIf="isCategoryDropdownOpen">
-      <div *ngFor="let category of categories">
-        <input type="checkbox" [value]="category" (change)="onCategoryChange($event)" /> {{ category }}
-      </div>
-      <span class="close" (click)="toggleCategoryDropdown()">&times;</span>
-    </div>
-  </div>
-</div>
-
 <div class="books-container">
-  <!-- Barra lateral de búsqueda y categorías para pantallas grandes -->
+  <!-- Barra lateral de categorías para pantallas grandes -->
   <div class="sidebar">
-    <div class="search-bar">
-      <input type="text" placeholder="Search for books..." [(ngModel)]="searchQuery" class="search-input" />
-      <button (click)="searchBooks()" class="search-button">Search</button>
-    </div>
     <h3>Categories</h3>
     <div *ngFor="let category of categories">
       <input type="checkbox" [value]="category" (change)="onCategoryChange($event)" /> {{ category }}
     </div>
   </div>
 
+  <!-- Lista de libros -->
   <div class="book-list-container">
     <div class="book-list-slides-container">
       <div *ngFor="let book of filteredBooks" class="book-slide">
         <div class="book-card">
-          <img [src]="book.imageUrl" alt="{{ book.title }}" class="book-image"/>
-          <div class="book-details">
-            <h3>{{ book.title }}</h3>
-            <p class="book-price">{{ book.price | currency }}</p>
-            <p class="book-genre">{{ book.author }}</p>
-            <div class="button-container">
-              <button (click)="addToCart(book._id)" class="add-to-cart-button">Add to Cart</button>
-              <button (click)="openBookDetailModal(book._id)" class="view-details">View Details</button>
+          <div class="book-image-container">
+            <img [src]="book.imageUrl" alt="{{ book.title }}" class="book-image"/>
+          </div>
+          <div class="book-details-container">
+            <div class="book-details">
+              <h3>{{ book.title }}</h3>
+              <p class="book-price">{{ book.price | currency }}</p>
+              <p class="book-genre">{{ book.author }}</p>
+              <div class="button-container">
+                <button (click)="addToCart(book._id)" class="add-to-cart-button">Add to Cart</button>
+                <button (click)="openBookDetailModal(book._id)" class="view-details">View Details</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal de Categorías -->
-<div id="categoryModal" class="modal">
-  <div class="modal-content">
-    <span class="close" (click)="closeCategoryModal()">&times;</span>
-    <h3>Categories</h3>
-    <div *ngFor="let category of categories">
-      <input type="checkbox" [value]="category" (change)="onCategoryChange($event)" /> {{ category }}
     </div>
   </div>
 </div>

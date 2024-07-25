@@ -1,24 +1,49 @@
 <nav class="navbar">
   <div class="navbar-container">
     <a href="#" class="navbar-brand">
-      <i class="fas fa-book"></i> EbookEmporium
+      <i class="fas fa-book"></i> <span class="navbar-title">EbookEmporium</span>
     </a>
-    <div class="navbar-links" [class.hidden]="isMenuModalOpen">
-      <a routerLink="/books">Books</a>
-      <a *ngIf="!isLoggedIn" routerLink="/register">Register</a>
-      <a *ngIf="!isLoggedIn" routerLink="/login">Login</a>
+    <div class="search-container">
+      <input type="text" placeholder="Search for books..." [(ngModel)]="searchQuery" (keydown.enter)="searchBooks()" class="top-search-input" />
+      <button (click)="searchBooks()" class="top-search-button"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="navbar-links">
+      <a routerLink="/register" *ngIf="!isLoggedIn">Register</a>
+      <a routerLink="/login" *ngIf="!isLoggedIn">Login</a>
       <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>
+    </div>
+    <div class="navbar-buttons">
+      <button class="menu-button" (click)="openMenuModal()">
+        <i class="fas fa-bars"></i>
+      </button>
       <button class="cart-button" (click)="toggleCartSidebar()">
         <i class="fas fa-shopping-cart"></i>
       </button>
     </div>
-    <button class="menu-button" (click)="openMenuModal()">
-      <i class="fas fa-bars"></i>
-    </button>
   </div>
 </nav>
 
-<!-- Menu Modal for Mobile -->
+<div class="categories-sort-section" *ngIf="isMobile">
+  <div class="dropdown">
+    <button class="dropdown-button" (click)="toggleCategoryDropdown()">Categories <i class="fas fa-chevron-down"></i></button>
+    <div class="dropdown-content" *ngIf="isCategoryDropdownOpen">
+      <button class="dropdown-item" *ngFor="let category of categories" (click)="filterByCategory(category)">
+        {{ category }}
+      </button>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropdown-button" (click)="toggleSortDropdown()">Sort <i class="fas fa-chevron-down"></i></button>
+    <div class="dropdown-content" *ngIf="isSortDropdownOpen">
+      <button class="dropdown-item" (click)="sortBooks('alphabetical')">Sort Alphabetically</button>
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>
+<app-cart-sidebar [isOpen]="isCartSidebarOpen" (close)="onCartClose()"></app-cart-sidebar>
+<app-notification-modal #notificationModal></app-notification-modal>
+
 <div id="menuModal" class="modal" [ngClass]="{'show': isMenuModalOpen}" (click)="closeMenuModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <span class="close" (click)="closeMenuModal()">&times;</span>
@@ -30,6 +55,10 @@
   </div>
 </div>
 
-<router-outlet></router-outlet>
-<app-cart-sidebar [isOpen]="isCartSidebarOpen" (close)="onCartClose()"></app-cart-sidebar>
-<app-notification-modal #notificationModal></app-notification-modal>
+<div id="sortModal" class="modal" *ngIf="isSortModalOpen">
+  <div class="modal-content">
+    <span class="close" (click)="toggleSortModal()">&times;</span>
+    <h3>Sort</h3>
+    <!-- Sort modal content goes here -->
+  </div>
+</div>

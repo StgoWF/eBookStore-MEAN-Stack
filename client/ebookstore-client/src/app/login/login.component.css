@@ -159,3 +159,9 @@ body {
   margin-top: 1rem;
   color: #dc3545;
 }
+
+
+.close-button{
+  position: relative;
+  left: 196px;
+}
