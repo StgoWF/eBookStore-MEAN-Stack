@@ -16,8 +16,19 @@ const paymentRoutes = require('./routes/payment');
 const app = express();
 
 // CORS configuration
+const allowedOrigins = [
+  process.env.CLIENT_UR1 || 'http://localhost:4200', // Local development
+  'https://ebookemporium-5f402b9d9f4b.herokuapp.com' // Heroku frontend URL
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:4200',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
