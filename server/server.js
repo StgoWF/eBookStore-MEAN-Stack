@@ -1,3 +1,4 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
@@ -17,17 +18,18 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_UR1 || 'http://localhost:4200', // Local development
-  'https://ebookemporium-5f402b9d9f4b.herokuapp.com' // Heroku frontend URL
+  process.env.CLIENT_UR1, // Your deployed client URL
+  'http://localhost:4200'  // Localhost for development
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
     }
+    return callback(null, true);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']

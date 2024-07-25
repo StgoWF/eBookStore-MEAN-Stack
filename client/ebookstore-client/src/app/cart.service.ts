@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { UserService } from './user.service';
 
@@ -23,6 +23,10 @@ export class CartService {
   }
 
   getCart(): Observable<any> {
+    if (!this.userService.isLoggedIn()) {
+      return of({ items: [] });
+    }
+
     const headers = this.getHeaders();
     return this.http.get(this.apiUrl, { headers }).pipe(
       tap(response => {
@@ -35,6 +39,10 @@ export class CartService {
   }
 
   addToCart(bookId: string, quantity: number): Observable<any> {
+    if (!this.userService.isLoggedIn()) {
+      return of({ message: 'User not authenticated' });
+    }
+
     const headers = this.getHeaders();
     return this.http.post(this.apiUrl, { bookId, quantity }, { headers }).pipe(
       tap(response => {
@@ -46,6 +54,10 @@ export class CartService {
   }
 
   updateCartItem(bookId: string, quantity: number): Observable<any> {
+    if (!this.userService.isLoggedIn()) {
+      return of({ message: 'User not authenticated' });
+    }
+
     const headers = this.getHeaders();
     return this.http.put(`${this.apiUrl}/item/${bookId}`, { quantity }, { headers }).pipe(
       tap(response => {
@@ -57,6 +69,10 @@ export class CartService {
   }
 
   removeItemFromCart(bookId: string): Observable<any> {
+    if (!this.userService.isLoggedIn()) {
+      return of({ message: 'User not authenticated' });
+    }
+
     const headers = this.getHeaders();
     return this.http.delete(`${this.apiUrl}/item/${bookId}`, { headers }).pipe(
       tap(response => {
@@ -68,6 +84,10 @@ export class CartService {
   }
 
   clearCart(): Observable<any> {
+    if (!this.userService.isLoggedIn()) {
+      return of({ message: 'User not authenticated' });
+    }
+
     const headers = this.getHeaders();
     return this.http.delete(this.apiUrl, { headers }).pipe(
       tap(response => {
@@ -80,7 +100,7 @@ export class CartService {
 
   private handleError(error: any) {
     console.error('An error occurred:', error);
-    return throwError(() => new Error('Something went wrong; please try again later.'));
+    return of({ message: 'Something went wrong; please try again later.' });
   }
 
   private groupCartItems(cart: any): any {
@@ -99,5 +119,4 @@ export class CartService {
     }, []);
     return { ...cart, items: groupedItems };
   }
-  
 }

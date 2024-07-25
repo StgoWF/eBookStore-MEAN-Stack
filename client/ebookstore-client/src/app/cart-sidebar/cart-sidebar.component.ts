@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router'; // Importa Router
 import { CartService } from '../cart.service';
+import { UserService } from '../user.service'; // Importa UserService
 
 @Component({
   selector: 'app-cart-sidebar',
@@ -12,24 +13,55 @@ export class CartSidebarComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
   cart: any = { items: [] };
 
-  constructor(private cartService: CartService, private router: Router) {} // Inyecta Router
+  constructor(
+    private cartService: CartService, 
+    private router: Router, 
+    private userService: UserService // Inyecta UserService
+  ) {}
 
   ngOnInit() {
-    this.cartService.cart$.subscribe((cart) => {
-      this.cart = cart;
-      console.log('Cart updated in sidebar:', this.cart);
-    });
+    if (this.userService.isLoggedIn()) {
+      this.loadCart();
+    }
+  }
+
+  loadCart(): void {
+    if (!this.userService.isLoggedIn()) {
+      console.error('User not authenticated');
+      return;
+    }
+    this.cartService.getCart().subscribe(
+      cart => {
+        this.cart = cart;
+        console.log('Cart loaded in sidebar:', cart);
+      },
+      error => {
+        console.error('Error loading cart in sidebar:', error);
+      }
+    );
   }
 
   updateQuantity(bookId: string, quantity: number) {
+    if (!this.userService.isLoggedIn()) {
+      console.error('User not authenticated');
+      return;
+    }
     this.cartService.updateCartItem(bookId, quantity).subscribe();
   }
 
   removeFromCart(bookId: string) {
+    if (!this.userService.isLoggedIn()) {
+      console.error('User not authenticated');
+      return;
+    }
     this.cartService.removeItemFromCart(bookId).subscribe();
   }
 
   clearCart() {
+    if (!this.userService.isLoggedIn()) {
+      console.error('User not authenticated');
+      return;
+    }
     this.cartService.clearCart().subscribe();
   }
 
@@ -38,6 +70,10 @@ export class CartSidebarComponent implements OnInit {
   }
 
   checkout() {
+    if (!this.userService.isLoggedIn()) {
+      console.error('User not authenticated');
+      return;
+    }
     alert('Proceeding to checkout...');
   }
 

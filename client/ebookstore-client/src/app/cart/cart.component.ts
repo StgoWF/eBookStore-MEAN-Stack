@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
 import { Router } from '@angular/router';
+import { UserService } from '../user.service';
 
 declare var paypal: any;
 
@@ -17,20 +18,31 @@ export class CartComponent implements OnInit, AfterViewInit {
   constructor(
     private cartService: CartService,
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.loadCart();
+    if (this.userService.isLoggedIn()) {
+      this.loadCart();
+    } else {
+      this.errorMessage = 'Please log in to view your cart.';
+    }
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initializePaypal();
-    }, 0);
+    if (this.userService.isLoggedIn()) {
+      setTimeout(() => {
+        this.initializePaypal();
+      }, 0);
+    }
   }
 
   loadCart(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.errorMessage = 'Please log in to view your cart.';
+      return;
+    }
     this.cartService.getCart().subscribe(
       cart => {
         this.cart = cart;
@@ -40,13 +52,17 @@ export class CartComponent implements OnInit, AfterViewInit {
         }, 0);
       },
       error => {
-        this.errorMessage = error.message;
+        this.errorMessage = 'Error loading cart: ' + error.message;
         console.error('Error loading cart:', error);
       }
     );
   }
 
   clearCart(): void {
+    if (!this.userService.isLoggedIn()) {
+      this.errorMessage = 'Please log in to clear your cart.';
+      return;
+    }
     this.cartService.clearCart().subscribe(
       () => {
         this.notificationService.showNotification('Cart cleared!');
@@ -54,7 +70,7 @@ export class CartComponent implements OnInit, AfterViewInit {
         this.loadCart();
       },
       error => {
-        this.errorMessage = error.message;
+        this.errorMessage = 'Error clearing cart: ' + error.message;
         console.error('Error clearing cart:', error);
       }
     );
@@ -81,21 +97,28 @@ export class CartComponent implements OnInit, AfterViewInit {
       console.error('Book ID is undefined');
       return;
     }
+    if (!this.userService.isLoggedIn()) {
+      this.errorMessage = 'Please log in to update the quantity.';
+      return;
+    }
     this.cartService.updateCartItem(bookId, quantity).subscribe(
       () => {
         console.log('Quantity updated');
         this.loadCart();
       },
       error => {
-        this.errorMessage = error.message;
+        this.errorMessage = 'Error updating quantity: ' + error.message;
         console.error('Error updating quantity:', error);
       }
     );
   }
-
   removeFromCart(bookId: string): void {
     if (!bookId) {
       console.error('Book ID is undefined');
+      return;
+    }
+    if (!this.userService.isLoggedIn()) {
+      this.errorMessage = 'Please log in to remove items from the cart.';
       return;
     }
     this.cartService.removeItemFromCart(bookId).subscribe(
@@ -105,7 +128,7 @@ export class CartComponent implements OnInit, AfterViewInit {
         this.loadCart();
       },
       error => {
-        this.errorMessage = error.message;
+        this.errorMessage = 'Error removing item from cart: ' + error.message;
         console.error('Error removing item from cart:', error);
       }
     );

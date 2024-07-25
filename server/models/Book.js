@@ -1,6 +1,8 @@
+// server/models/Book.js
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const bookSchema = new mongoose.Schema({
+const BookSchema = new Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
   genre: { type: String, required: true },
@@ -12,4 +14,4 @@ const bookSchema = new mongoose.Schema({
   categories: { type: [String] }   // Agregar categorías
 });
 
-module.exports = mongoose.model('Book', bookSchema);
+module.exports = mongoose.model('Book', BookSchema);

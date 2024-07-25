@@ -19,13 +19,28 @@ export class RegisterComponent {
     const user = { username: this.username, email: this.email, password: this.password };
     this.authService.register(user).subscribe(
       response => {
-        console.log(response); // Añadir esta línea para ver la respuesta en la consola
-        this.message = 'Registration successful';
-        this.router.navigate(['/login']);
+        console.log(response);
+        this.message = 'Registration successful, logging in...';
+        this.loginAfterRegistration(user.email, user.password);
       },
       error => {
         this.message = 'Registration failed';
-        console.error(error); // Añadir esta línea para ver el error en la consola
+        console.error(error);
+      }
+    );
+  }
+
+  loginAfterRegistration(email: string, password: string) {
+    const user = { email, password };
+    this.authService.login(user).subscribe(
+      response => {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.userId);
+        this.router.navigate(['/books']);
+      },
+      error => {
+        this.message = 'Login failed after registration';
+        console.error(error);
       }
     );
   }

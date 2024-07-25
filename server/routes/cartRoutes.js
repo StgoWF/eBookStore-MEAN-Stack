@@ -1,11 +1,10 @@
-// server/routes/cartRoutes.js
 const express = require('express');
 const router = express.Router();
-const verifyToken = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const Cart = require('../models/Cart');
 
 // Obtener el carrito del usuario
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.book');
     if (!cart) {
@@ -18,29 +17,29 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 // Agregar un libro al carrito
-router.post('/', verifyToken, async (req, res) => {
-    const { bookId, quantity } = req.body;
-    try {
-      let cart = await Cart.findOne({ user: req.user.id });
-      if (!cart) {
-        cart = new Cart({ user: req.user.id, items: [] });
-      }
-      const existingItem = cart.items.find(item => item.book.toString() === bookId);
-      if (existingItem) {
-        existingItem.quantity += quantity;
-      } else {
-        cart.items.push({ book: bookId, quantity });
-      }
-      await cart.save();
-      res.json(cart);
-    } catch (error) {
-      console.error('Error adding item to cart:', error);
-      res.status(500).json({ message: 'Server error' });
+router.post('/', auth, async (req, res) => {
+  const { bookId, quantity } = req.body;
+  try {
+    let cart = await Cart.findOne({ user: req.user.id });
+    if (!cart) {
+      cart = new Cart({ user: req.user.id, items: [] });
     }
-  });
-  
+    const existingItem = cart.items.find(item => item.book.toString() === bookId);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      cart.items.push({ book: bookId, quantity });
+    }
+    await cart.save();
+    res.json(cart);
+  } catch (error) {
+    console.error('Error adding item to cart:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Eliminar un libro específico del carrito
-router.delete('/item/:bookId', verifyToken, async (req, res) => {
+router.delete('/item/:bookId', auth, async (req, res) => {
   const { bookId } = req.params;
   try {
     const cart = await Cart.findOne({ user: req.user.id });
@@ -64,23 +63,24 @@ router.delete('/item/:bookId', verifyToken, async (req, res) => {
 });
 
 // Ruta para vaciar el carrito
-router.delete('/', verifyToken, async (req, res) => {
-    try {
-      const userId = req.user.id;
-      const cart = await Cart.findOne({ user: userId });
-      if (!cart) {
-        return res.status(404).json({ message: 'Cart not found' });
-      }
-      cart.items = [];
-      await cart.save();
-      res.status(200).json({ message: 'Cart cleared successfully' });
-    } catch (error) {
-      console.error('Error clearing cart:', error);
-      res.status(500).json({ message: 'Server error' });
+router.delete('/', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const cart = await Cart.findOne({ user: userId });
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
     }
-  });
+    cart.items = [];
+    await cart.save();
+    res.status(200).json({ message: 'Cart cleared successfully' });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Actualizar la cantidad de un libro en el carrito
-router.put('/item/:bookId', verifyToken, async (req, res) => {
+router.put('/item/:bookId', auth, async (req, res) => {
   const { bookId } = req.params;
   const { quantity } = req.body;
   try {
