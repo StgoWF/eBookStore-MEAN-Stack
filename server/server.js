@@ -3,16 +3,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const admin = require('./server/firebase-admin'); // Adjust the path if necessary
+const admin = require('./firebase-admin');
 const jwt = require('jsonwebtoken');
+const seedBooks = require('./seed');
 
-const userRoutes = require('./server/routes/userRoutes');
-const bookRoutes = require('./server/routes/bookRoutes');
-const cartRoutes = require('./server/routes/cartRoutes');
-const paymentRoutes = require('./server/routes/paymentRoutes'); // Adjust the path if necessary
+// Import routes
+const userRoutes = require('./routes/userRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const paymentRoutes = require('./routes/payment');
 
 const app = express();
 
+// CORS configuration
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:4200',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -21,11 +24,10 @@ app.use(cors({
 
 app.use(express.json());
 
-// Static file serving for Angular app
-app.use(express.static(path.join(__dirname, 'client/ebookstore-client/dist/ebookstore-client')));
+// Serve static files from Angular app
+app.use(express.static(path.join(__dirname, '../client/ebookstore-client/dist/ebookstore-client')));
 
-const PORT = process.env.PORT || 5001;
-
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -35,9 +37,10 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-  await require('./server/seed')(); // Ensure this is correctly defined to insert test data
+  await seedBooks(); // Ensure this function is correctly defined to insert test data
 });
 
+// Middleware to verify tokens
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -70,6 +73,7 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
+// Define routes
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', verifyToken, cartRoutes);
@@ -83,9 +87,11 @@ app.use((err, req, res, next) => {
 
 // Serve Angular app for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client/ebookstore-client/dist/ebookstore-client/index.html'));
+  res.sendFile(path.join(__dirname, '../client/ebookstore-client/dist/ebookstore-client/index.html'));
 });
 
+// Start server
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
