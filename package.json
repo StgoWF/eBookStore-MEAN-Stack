@@ -10,7 +10,7 @@
         "ng": "ng",
         "build": "ng build",
         "build:prod": "ng build --prod",
-        "postinstall": "ng build --prod",
+        "postinstall": "cd client/ebookstore-client && npm run build:prod",
         "watch": "ng build --watch --configuration development"
     },
     "dependencies": {
