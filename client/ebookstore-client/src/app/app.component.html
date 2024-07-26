@@ -8,6 +8,7 @@
       <button (click)="searchBooks()" class="top-search-button"><i class="fas fa-search"></i></button>
     </div>
     <div class="navbar-links">
+      <a routerLink="/books">Books</a>
       <a routerLink="/register" *ngIf="!isLoggedIn">Register</a>
       <a routerLink="/login" *ngIf="!isLoggedIn">Login</a>
       <a *ngIf="isLoggedIn" (click)="logout()">Logout</a>

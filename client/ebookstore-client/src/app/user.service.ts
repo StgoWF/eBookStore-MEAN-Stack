@@ -21,6 +21,8 @@ export class UserService {
       tap((response: any) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('userId', response.userId);
+        // Reload the page after successful login
+        window.location.reload();
       })
     );
   }
@@ -40,5 +42,7 @@ export class UserService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    // Optionally, you can also reload the page after logout
+    window.location.reload();
   }
 }
