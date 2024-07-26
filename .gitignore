@@ -76,17 +76,11 @@ web_modules/
 coverage/
 coverage/*
 
-# Angular build files
-dist/
-dist/*
 
 # Firebase cache
 .firebase
 
-# Compiled output
-dist/
-tmp/
-temp/
+
 
 # Misc
 .DS_Store
@@ -105,21 +99,13 @@ Thumbs.db
 # macOS files
 *.DS_Store
 
-# Other system files
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.seed
-*.pid.lock
 
 # Env files in any subdirectories
 **/.env
 **/.env.*
 
 # Ignore any build artifacts
-build/
+
 dist/
 tmp/
 temp/
