@@ -1,4 +1,3 @@
-// src/app/book-list/book-list.component.ts
 import { Component, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
@@ -56,13 +55,13 @@ export class BookListComponent implements OnInit, OnChanges {
     this.cartService.addToCart(bookId, 1).subscribe({
       next: (response) => {
         if (response.success !== false) {
-          this.notificationService.showNotification('Book added to cart!');
+          this.notificationService.showNotification('Book added to cart!', 'success');
         } else {
-          this.notificationService.showNotification(response.message || 'Failed to add book to cart.');
+          this.notificationService.showNotification(response.message || 'Failed to add book to cart.', 'error');
         }
       },
       error: (error) => {
-        this.notificationService.showNotification('Failed to add book to cart.');
+        this.notificationService.showNotification('Failed to add book to cart.', 'error');
         console.error('Error adding book to cart:', error);
       }
     });

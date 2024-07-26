@@ -11,9 +11,9 @@ export class NotificationService {
     this.notificationModal = notificationModal;
   }
 
-  showNotification(message: string) {
+  showNotification(message: string, type: 'success' | 'error' = 'success') {
     if (this.notificationModal) {
-      this.notificationModal.showNotification(message);
+      this.notificationModal.showNotification(message, type);
     } else {
       console.error('NotificationModalComponent is not registered.');
     }
