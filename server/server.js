@@ -16,12 +16,13 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  'https://ebookemporium-5f402b9d9f4b.herokuapp.com'  // Localhost for development
+  'http://localhost:4200', // For local development
+  'https://ebookemporium-5f402b9d9f4b.herokuapp.com' // For production
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);

@@ -1,15 +1,15 @@
-// src/app/book.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Book } from './book.model';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BookService {
-  private apiUrl = 'http://localhost:5001/api/books';  // Asegúrate de que el puerto sea el correcto
+  private apiUrl = `${environment.apiUrl}/books`;
 
   constructor(private http: HttpClient) { }
 
