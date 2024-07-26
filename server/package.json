@@ -5,7 +5,7 @@
   "scripts": {
       "start": "node server/server.js",
       "heroku-postbuild": "cd client/ebookstore-client && npm install && npm run build:prod",
-      "build-client": "cd client/ebookstore-client && npm install && npm run build",
+      "build-client": "cd client/ebookstore-client && npm install && npm run build:prod",
       "test": "cd client/ebookstore-client && npm test",
       "ng": "ng",
       "build": "ng build",

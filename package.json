@@ -4,9 +4,14 @@
     "main": "server/server.js",
     "scripts": {
         "start": "node server/server.js",
-        "heroku-postbuild": "cd client/ebookstore-client && npm install && npm run build",
-        "build-client": "cd client/ebookstore-client && npm install && npm run build",
-        "test": "cd client/ebookstore-client && npm test"
+        "heroku-postbuild": "cd client/ebookstore-client && npm install && npm run build:prod",
+        "build-client": "cd client/ebookstore-client && npm install && npm run build:prod",
+        "test": "cd client/ebookstore-client && npm test",
+        "ng": "ng",
+        "build": "ng build",
+        "build:prod": "ng build --prod",
+        "postinstall": "ng build --prod",
+        "watch": "ng build --watch --configuration development"
     },
     "dependencies": {
         "@angular/animations": "^18.1.1",
