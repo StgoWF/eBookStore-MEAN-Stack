@@ -1,31 +1,43 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const admin = require('./firebase-admin');
+const path = require('path');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const path = require('path');  // Added for serving static files
+const admin = require('./firebase-admin');
+const seedBooks = require('./seed');
+require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes');
 const bookRoutes = require('./routes/bookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
-const paymentRoutes = require('./routes/paymentRoutes');  // Make sure this is the correct path
+const paymentRoutes = require('./routes/payment');
 
 const app = express();
 
+// CORS configuration
+const allowedOrigins = [
+  'https://ebookemporium-5f402b9d9f4b.herokuapp.com'
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:4200',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 
-// Static file serving for Angular app
-app.use(express.static(path.join(__dirname, 'ebookstore-client/dist/ebookstore-client')));
+// Serve static files from Angular app
+app.use(express.static(path.join(__dirname, '../client/ebookstore-client/dist/ebookstore-client')));
 
-const PORT = process.env.PORT || 5001;
-
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -35,9 +47,10 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-  await seedBooks();  // Ensure this is correctly defined to insert test data
+  await seedBooks(); // Ensure this function is correctly defined to insert test data
 });
 
+// Middleware to verify tokens
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -70,10 +83,11 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
+// Define routes
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', verifyToken, cartRoutes);
-app.use('/api/payment', paymentRoutes);  // Ensure the correct import and path
+app.use('/api/payment', paymentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -83,9 +97,11 @@ app.use((err, req, res, next) => {
 
 // Serve Angular app for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'ebookstore-client/dist/ebookstore-client/index.html'));
+  res.sendFile(path.join(__dirname, '../client/ebookstore-client/dist/ebookstore-client/index.html'));
 });
 
+// Start server
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
