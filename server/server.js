@@ -16,7 +16,8 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  'https://ebookemporium-5f402b9d9f4b.herokuapp.com'
+  'https://ebookemporium-5f402b9d9f4b.herokuapp.com',
+  'http://localhost:4200' 
 ];
 
 app.use(cors({
@@ -38,10 +39,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client/ebookstore-client/dist/ebookstore-client')));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.MONGO_URI);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
