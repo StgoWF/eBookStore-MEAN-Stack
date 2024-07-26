@@ -1,14 +1,12 @@
-// server.js
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const admin = require('./firebase-admin');
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const admin = require('./firebase-admin');
 const seedBooks = require('./seed');
+require('dotenv').config();
 
-// Import routes
 const userRoutes = require('./routes/userRoutes');
 const bookRoutes = require('./routes/bookRoutes');
 const cartRoutes = require('./routes/cartRoutes');
@@ -18,7 +16,7 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_UR1, // Your deployed client URL
+  process.env.CLIENT_URL, // Your deployed client URL
   'http://localhost:4200'  // Localhost for development
 ];
 
