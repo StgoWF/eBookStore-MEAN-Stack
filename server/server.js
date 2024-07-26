@@ -16,8 +16,7 @@ const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_URL, // Your deployed client URL
-  'http://localhost:4200'  // Localhost for development
+  'https://ebookemporium-5f402b9d9f4b.herokuapp.com'  // Localhost for development
 ];
 
 app.use(cors({
