@@ -1,3 +1,4 @@
+// src/app/cart.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, BehaviorSubject } from 'rxjs';
@@ -35,73 +36,79 @@ export class CartService {
         this.cartSubject.next(groupedCart);
         console.log('getCart response:', response);
       }),
-      catchError(this.handleError)
+      catchError(this.handleError('getCart', { items: [] }))
     );
   }
 
   addToCart(bookId: string, quantity: number): Observable<any> {
     if (!this.userService.isLoggedIn()) {
-      return of({ message: 'User not authenticated' });
+      return of({ success: false, message: 'User not authenticated' });
     }
 
     const headers = this.getHeaders();
     return this.http.post(this.apiUrl, { bookId, quantity }, { headers }).pipe(
       tap(response => {
         this.getCart().subscribe();
+        this.cartSubject.next(response);
         console.log('addToCart response:', response);
       }),
-      catchError(this.handleError)
+      catchError(this.handleError('addToCart', { success: false, message: 'Failed to add book to cart' }))
     );
   }
 
   updateCartItem(bookId: string, quantity: number): Observable<any> {
     if (!this.userService.isLoggedIn()) {
-      return of({ message: 'User not authenticated' });
+      return of({ success: false, message: 'User not authenticated' });
     }
 
     const headers = this.getHeaders();
     return this.http.put(`${this.apiUrl}/item/${bookId}`, { quantity }, { headers }).pipe(
       tap(response => {
         this.getCart().subscribe();
+        this.cartSubject.next(response);
         console.log('updateCartItem response:', response);
       }),
-      catchError(this.handleError)
+      catchError(this.handleError('updateCartItem', { success: false, message: 'Failed to update cart item' }))
     );
   }
 
   removeItemFromCart(bookId: string): Observable<any> {
     if (!this.userService.isLoggedIn()) {
-      return of({ message: 'User not authenticated' });
+      return of({ success: false, message: 'User not authenticated' });
     }
 
     const headers = this.getHeaders();
     return this.http.delete(`${this.apiUrl}/item/${bookId}`, { headers }).pipe(
       tap(response => {
         this.getCart().subscribe();
+        this.cartSubject.next(response);
         console.log('removeItemFromCart response:', response);
       }),
-      catchError(this.handleError)
+      catchError(this.handleError('removeItemFromCart', { success: false, message: 'Failed to remove item from cart' }))
     );
   }
 
   clearCart(): Observable<any> {
     if (!this.userService.isLoggedIn()) {
-      return of({ message: 'User not authenticated' });
+      return of({ success: false, message: 'User not authenticated' });
     }
 
     const headers = this.getHeaders();
     return this.http.delete(this.apiUrl, { headers }).pipe(
       tap(response => {
         this.getCart().subscribe();
+        this.cartSubject.next(response);
         console.log('clearCart response:', response);
       }),
-      catchError(this.handleError)
+      catchError(this.handleError('clearCart', { success: false, message: 'Failed to clear cart' }))
     );
   }
 
-  private handleError(error: any) {
-    console.error('An error occurred:', error);
-    return of({ message: 'Something went wrong; please try again later.' });
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+      console.error(`${operation} failed:`, error);
+      return of(result as T);
+    };
   }
 
   private groupCartItems(cart: any): any {

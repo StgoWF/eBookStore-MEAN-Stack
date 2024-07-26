@@ -25,6 +25,10 @@ export class CartComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     if (this.userService.isLoggedIn()) {
       this.loadCart();
+      this.cartService.cart$.subscribe(cart => {
+        this.cart = cart;
+        console.log('Cart updated:', cart);
+      });
     } else {
       this.errorMessage = 'Please log in to view your cart.';
     }
@@ -39,10 +43,6 @@ export class CartComponent implements OnInit, AfterViewInit {
   }
 
   loadCart(): void {
-    if (!this.userService.isLoggedIn()) {
-      this.errorMessage = 'Please log in to view your cart.';
-      return;
-    }
     this.cartService.getCart().subscribe(
       cart => {
         this.cart = cart;
@@ -59,10 +59,6 @@ export class CartComponent implements OnInit, AfterViewInit {
   }
 
   clearCart(): void {
-    if (!this.userService.isLoggedIn()) {
-      this.errorMessage = 'Please log in to clear your cart.';
-      return;
-    }
     this.cartService.clearCart().subscribe(
       () => {
         this.notificationService.showNotification('Cart cleared!');
@@ -98,7 +94,7 @@ export class CartComponent implements OnInit, AfterViewInit {
       return;
     }
     if (!this.userService.isLoggedIn()) {
-      this.errorMessage = 'Please log in to update the quantity.';
+      this.notificationService.showNotification('Please log in to update the quantity.');
       return;
     }
     this.cartService.updateCartItem(bookId, quantity).subscribe(
@@ -107,18 +103,19 @@ export class CartComponent implements OnInit, AfterViewInit {
         this.loadCart();
       },
       error => {
-        this.errorMessage = 'Error updating quantity: ' + error.message;
+        this.notificationService.showNotification('Error updating quantity: ' + error.message);
         console.error('Error updating quantity:', error);
       }
     );
   }
+
   removeFromCart(bookId: string): void {
     if (!bookId) {
       console.error('Book ID is undefined');
       return;
     }
     if (!this.userService.isLoggedIn()) {
-      this.errorMessage = 'Please log in to remove items from the cart.';
+      this.notificationService.showNotification('Please log in to remove items from the cart.');
       return;
     }
     this.cartService.removeItemFromCart(bookId).subscribe(
@@ -128,7 +125,7 @@ export class CartComponent implements OnInit, AfterViewInit {
         this.loadCart();
       },
       error => {
-        this.errorMessage = 'Error removing item from cart: ' + error.message;
+        this.notificationService.showNotification('Error removing item from cart: ' + error.message);
         console.error('Error removing item from cart:', error);
       }
     );
@@ -141,11 +138,11 @@ export class CartComponent implements OnInit, AfterViewInit {
   async initializePaypal(): Promise<void> {
     const paypalContainer = document.getElementById('paypal-button-container');
     if (paypalContainer) {
-      paypalContainer.innerHTML = ''; // Limpiar el contenedor antes de renderizar
+      paypalContainer.innerHTML = ''; // Clear the container before rendering
       paypal.Buttons({
-        env: 'sandbox', // Asegúrate de que esto está configurado para usar sandbox
+        env: 'sandbox', // Ensure this is set to sandbox for testing
         client: {
-          sandbox: 'AS4Or1-wqmvBkyfj8fC2cnXud-SZWE2jz8t4pEHndW341xHtN_F7jRkkmPPkOPrppph-Rwpat11aptOk', // Reemplaza con tu clientId de sandbox
+          sandbox: 'AS4Or1-wqmvBkyfj8fC2cnXud-SZWE2jz8t4pEHndW341xHtN_F7jRkkmPPkOPrppph-Rwpat11aptOk', // Replace with your sandbox clientId
         },
         style: {
           shape: 'rect',
@@ -172,20 +169,20 @@ export class CartComponent implements OnInit, AfterViewInit {
               this.notificationService.showNotification('Transaction completed by ' + details.payer.name.given_name);
               this.router.navigate(['/payment-confirmation'], { queryParams: { success: true } });
             } catch (error) {
-              console.error('Error al limpiar el carrito:', error);
+              console.error('Error clearing cart:', error);
               this.router.navigate(['/payment-confirmation'], { queryParams: { success: false } });
             }
           }).catch(err => {
-            console.error('Error capturando la orden:', err);
+            console.error('Error capturing order:', err);
             this.router.navigate(['/payment-confirmation'], { queryParams: { success: false } });
           });
         },
         onError: (err) => {
-          console.error('Error durante la transacción de PayPal', err);
+          console.error('Error during PayPal transaction', err);
         }
       }).render('#paypal-button-container');
     } else {
-      console.error('Contenedor del botón de PayPal no encontrado');
+      console.error('PayPal button container not found');
     }
   }
 

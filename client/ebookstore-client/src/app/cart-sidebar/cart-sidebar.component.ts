@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router'; // Importa Router
+import { Router } from '@angular/router';
 import { CartService } from '../cart.service';
-import { UserService } from '../user.service'; // Importa UserService
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-cart-sidebar',
@@ -14,22 +14,22 @@ export class CartSidebarComponent implements OnInit {
   cart: any = { items: [] };
 
   constructor(
-    private cartService: CartService, 
-    private router: Router, 
-    private userService: UserService // Inyecta UserService
+    private cartService: CartService,
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit() {
     if (this.userService.isLoggedIn()) {
       this.loadCart();
+      this.cartService.cart$.subscribe(cart => {
+        this.cart = cart;
+        console.log('Cart updated in sidebar:', cart);
+      });
     }
   }
 
   loadCart(): void {
-    if (!this.userService.isLoggedIn()) {
-      console.error('User not authenticated');
-      return;
-    }
     this.cartService.getCart().subscribe(
       cart => {
         this.cart = cart;
@@ -42,26 +42,14 @@ export class CartSidebarComponent implements OnInit {
   }
 
   updateQuantity(bookId: string, quantity: number) {
-    if (!this.userService.isLoggedIn()) {
-      console.error('User not authenticated');
-      return;
-    }
     this.cartService.updateCartItem(bookId, quantity).subscribe();
   }
 
   removeFromCart(bookId: string) {
-    if (!this.userService.isLoggedIn()) {
-      console.error('User not authenticated');
-      return;
-    }
     this.cartService.removeItemFromCart(bookId).subscribe();
   }
 
   clearCart() {
-    if (!this.userService.isLoggedIn()) {
-      console.error('User not authenticated');
-      return;
-    }
     this.cartService.clearCart().subscribe();
   }
 
@@ -70,10 +58,6 @@ export class CartSidebarComponent implements OnInit {
   }
 
   checkout() {
-    if (!this.userService.isLoggedIn()) {
-      console.error('User not authenticated');
-      return;
-    }
     alert('Proceeding to checkout...');
   }
 

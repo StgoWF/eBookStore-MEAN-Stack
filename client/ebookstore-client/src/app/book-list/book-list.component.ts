@@ -54,11 +54,16 @@ export class BookListComponent implements OnInit, OnChanges {
 
   addToCart(bookId: string): void {
     this.cartService.addToCart(bookId, 1).subscribe({
-      next: () => {
-        this.notificationService.showNotification('Book added to cart!');
+      next: (response) => {
+        if (response.success !== false) {
+          this.notificationService.showNotification('Book added to cart!');
+        } else {
+          this.notificationService.showNotification(response.message || 'Failed to add book to cart.');
+        }
       },
       error: (error) => {
-        this.notificationService.showNotification('Failed to add book to cart');
+        this.notificationService.showNotification('Failed to add book to cart.');
+        console.error('Error adding book to cart:', error);
       }
     });
   }
