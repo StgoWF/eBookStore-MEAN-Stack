@@ -1,4 +1,10 @@
 const admin = require('firebase-admin');
+require('dotenv').config();
+
+
+if (!process.env.FIREBASE_PRIVATE_KEY || !process.env.FIREBASE_PROJECT_ID || !process.env.CLIENT_EMAIL) {
+  throw new Error('Missing Firebase environment variables');
+}
 
 const serviceAccount = {
   "type": process.env.FIREBASE_TYPE,

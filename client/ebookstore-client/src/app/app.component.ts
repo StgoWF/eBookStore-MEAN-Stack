@@ -90,7 +90,6 @@ export class AppComponent implements OnInit {
   loadBooks() {
     this.bookService.getBooks(1, 1000).subscribe(
       response => {
-        console.log('Books loaded:', response.books);
         this.books = response.books;
         this.searchService.updateBooks(this.books);
       },

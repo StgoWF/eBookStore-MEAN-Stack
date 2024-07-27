@@ -25,9 +25,10 @@ export class BookDetailModalComponent implements OnChanges {
       console.log('Modal open state:', this.isOpen);
     }
     if (changes['book']) {
-      console.log('Selected book:', this.book);
+      console.log('Selected book in modal:', this.book);
       if (this.book) {
-        this.quantity = 1; // Reset quantity when book changes
+        console.log('Book apiDescription:', this.book.apiDescription);
+        this.quantity = 1;
       }
     }
   }
@@ -49,11 +50,11 @@ export class BookDetailModalComponent implements OnChanges {
   addToCart(bookId: string) {
     this.cartService.addToCart(bookId, this.quantity).subscribe({
       next: () => {
-        this.notificationService.showNotification('Book added to cart!');
+        this.notificationService.showNotification('Book added to cart!', 'success');
         this.closeModal();
       },
       error: (error) => {
-        this.notificationService.showNotification('Failed to add book to cart');
+        this.notificationService.showNotification('Failed to add book to cart', 'error');
         console.error(error);
       }
     });

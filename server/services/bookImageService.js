@@ -1,10 +1,14 @@
 const axios = require('axios');
 
-const getBookImage = async (title) => {
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const getBookImage = async (title, delayTime = 1000) => {
   try {
     let imageUrl = null;
 
-    // Primer intento con restricción de idioma
+    // First attempt with language restriction
     let response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
       params: {
         q: title,
@@ -13,6 +17,8 @@ const getBookImage = async (title) => {
       }
     });
 
+    await delay(delayTime);  // Introduce delay
+
     if (response.data.items && response.data.items.length > 0) {
       const book = response.data.items[0];
       if (book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail) {
@@ -20,7 +26,7 @@ const getBookImage = async (title) => {
       }
     }
 
-    // Si no se encuentra una imagen válida, realiza una segunda búsqueda sin restricción de idioma
+    // Second attempt without language restriction
     if (!imageUrl) {
       response = await axios.get('https://www.googleapis.com/books/v1/volumes', {
         params: {
@@ -28,9 +34,10 @@ const getBookImage = async (title) => {
           key: process.env.GOOGLE_BOOKS_API_KEY,
           maxResults: 1,
           langRestrict: 'en'
-
         }
       });
+
+      await delay(delayTime);  // Introduce delay
 
       if (response.data.items && response.data.items.length > 0) {
         const book = response.data.items[0];

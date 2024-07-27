@@ -1,3 +1,4 @@
+// src/app/book-list/book-list.component.ts
 import { Component, OnInit, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
@@ -39,6 +40,7 @@ export class BookListComponent implements OnInit, OnChanges {
     });
     this.searchService.books$.subscribe(books => {
       this.books = books;
+      console.log('Books loaded:', this.books); // Log books loaded
       this.updateCategories();
       this.filterBooks();
     });
@@ -71,6 +73,7 @@ export class BookListComponent implements OnInit, OnChanges {
     const selectedBook = this.books.find(book => book._id === bookId);
     if (selectedBook) {
       this.bookDetailModal.book = selectedBook;
+      console.log('Opening book detail modal for book:', this.bookDetailModal.book); // Log selected book
       this.bookDetailModal.isOpen = true;
     }
   }

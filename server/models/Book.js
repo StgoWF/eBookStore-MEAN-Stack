@@ -7,11 +7,12 @@ const BookSchema = new Schema({
   author: { type: String, required: true },
   genre: { type: String, required: true },
   price: { type: Number, required: true },
-  description: { type: String, required: true },
+  description: { type: String, required: true }, // Seed data description
   imageUrl: { type: String },
-  authors: { type: [String] },  // Agregar autores
-  publishedDate: { type: String }, // Agregar fecha de publicación
-  categories: { type: [String] }   // Agregar categorías
+  authors: { type: [String] },
+  publishedDate: { type: String },
+  categories: { type: [String] },
+  apiDescription: { type: String } // Google Books API description
 });
 
 module.exports = mongoose.model('Book', BookSchema);
