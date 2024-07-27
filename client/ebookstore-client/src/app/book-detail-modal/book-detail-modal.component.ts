@@ -1,4 +1,3 @@
-// src/app/book-detail-modal/book-detail-modal.component.ts
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { Book } from '../book.model';
 import { CartService } from '../cart.service';

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Book = require('./models/Book');
 const getBookImage = require('./services/bookImageService'); // Importa la función getBookImage
+const getBookDetails = require('./services/bookDetailService'); // Importa la función getBookDetails
 require('dotenv').config();
 
 
@@ -358,17 +359,27 @@ async function seedBooks() {
     await Book.deleteMany({}); // Elimina todos los libros existentes
 
     // Insertar libros de prueba con la URL de la imagen
-    const booksWithImages = await Promise.all(books.map(async (book) => {
+    const booksWithDetails = await Promise.all(books.map(async (book) => {
       try {
         const imageUrl = await getBookImage(book.title);
-        return { ...book, imageUrl };
+        const details = await getBookDetails(book.title);
+
+        return {
+          ...book,
+          imageUrl,
+          apiDescription: details.description,
+          authors: details.authors,
+          publishedDate: details.publishedDate,
+          categories: details.categories,
+        };
+
       } catch (error) {
         console.error(`Error obtaining image for book "${book.title}":`, error.message);
         return book; // Si hay un error, devuelve el libro sin la URL de la imagen
       }
     }));
 
-    await Book.insertMany(booksWithImages); // Inserta los libros de prueba
+    await Book.insertMany(booksWithDetails); // Inserta los libros de prueba
     console.log('Seed data inserted successfully');
   } catch (err) {
     console.error('Error inserting seed data:', err);
