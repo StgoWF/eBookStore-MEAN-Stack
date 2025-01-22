@@ -6,8 +6,11 @@ const Cart = require('../models/Cart');
 const Book = require('../models/Book'); // Ensure you have this
 
 // Obtener el carrito del usuario
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' }); // Si el usuario no está autenticado
+    }
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.book');
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
@@ -18,9 +21,14 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+
 // Agregar un libro al carrito
 router.post('/', auth, async (req, res) => {
   const { bookId, quantity } = req.body;
+  if (!bookId || !quantity || quantity <= 0) {
+    return res.status(400).json({ message: 'Invalid bookId or quantity' });
+  }
+
   try {
     let cart = await Cart.findOne({ user: req.user.id });
     if (!cart) {
@@ -40,16 +48,19 @@ router.post('/', auth, async (req, res) => {
     const populatedCart = await cart.populate('items.book').execPopulate();
     res.json(populatedCart);
   } catch (error) {
-    console.error('Error adding item to cart:', error);
+    console.error('Error adding item to cart:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
+
 // Eliminar un libro específico del carrito
-router.delete('/item/:bookId', auth, async (req, res) => {
+router.delete('/item/:bookId', async (req, res) => {
+  const { userId } = req.query; // Tomamos userId del query param
   const { bookId } = req.params;
+
   try {
-    const cart = await Cart.findOne({ user: req.user.id });
+    const cart = await Cart.findOne({ user: userId });
     if (!cart) {
       return res.status(404).json({ message: 'Cart not found' });
     }
@@ -61,11 +72,10 @@ router.delete('/item/:bookId', auth, async (req, res) => {
 
     cart.items.splice(itemIndex, 1);
     await cart.save();
-
     const populatedCart = await cart.populate('items.book').execPopulate();
     res.json(populatedCart);
   } catch (error) {
-    console.error('Error deleting item from cart:', error);
+    console.error('Error deleting item from cart:', error.message);
     res.status(500).json({ message: 'Server error' });
   }
 });

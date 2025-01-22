@@ -89,7 +89,7 @@ const verifyToken = async (req, res, next) => {
 // Define routes
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/cart', verifyToken, cartRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/payment', paymentRoutes);
 
 // Error handling middleware
