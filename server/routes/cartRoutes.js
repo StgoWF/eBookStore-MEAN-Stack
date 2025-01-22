@@ -1,7 +1,9 @@
+// server/routes/cartRoutes.js
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const Cart = require('../models/Cart');
+const Book = require('../models/Book'); // Ensure you have this
 
 // Obtener el carrito del usuario
 router.get('/', auth, async (req, res) => {
@@ -28,10 +30,15 @@ router.post('/', auth, async (req, res) => {
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
+      const book = await Book.findById(bookId);
+      if (!book) {
+        return res.status(404).json({ message: 'Book not found' });
+      }
       cart.items.push({ book: bookId, quantity });
     }
     await cart.save();
-    res.json(cart);
+    const populatedCart = await cart.populate('items.book').execPopulate();
+    res.json(populatedCart);
   } catch (error) {
     console.error('Error adding item to cart:', error);
     res.status(500).json({ message: 'Server error' });
@@ -55,7 +62,8 @@ router.delete('/item/:bookId', auth, async (req, res) => {
     cart.items.splice(itemIndex, 1);
     await cart.save();
 
-    res.json(cart);
+    const populatedCart = await cart.populate('items.book').execPopulate();
+    res.json(populatedCart);
   } catch (error) {
     console.error('Error deleting item from cart:', error);
     res.status(500).json({ message: 'Server error' });
@@ -101,7 +109,8 @@ router.put('/item/:bookId', auth, async (req, res) => {
     }
 
     await cart.save();
-    res.json(cart);
+    const populatedCart = await cart.populate('items.book').execPopulate();
+    res.json(populatedCart);
   } catch (error) {
     console.error('Error updating item quantity:', error);
     res.status(500).json({ message: 'Server error' });

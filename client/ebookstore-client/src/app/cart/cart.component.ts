@@ -2,7 +2,6 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CartService } from '../cart.service';
 import { NotificationService } from '../notification.service';
 import { Router } from '@angular/router';
-import { UserService } from '../user.service';
 
 declare var paypal: any;
 
@@ -18,28 +17,21 @@ export class CartComponent implements OnInit, AfterViewInit {
   constructor(
     private cartService: CartService,
     private notificationService: NotificationService,
-    private router: Router,
-    private userService: UserService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    if (this.userService.isLoggedIn()) {
-      this.loadCart();
-      this.cartService.cart$.subscribe(cart => {
-        this.cart = cart;
-        console.log('Cart updated:', cart);
-      });
-    } else {
-      this.errorMessage = 'Please log in to view your cart.';
-    }
+    this.loadCart();
+    this.cartService.cart$.subscribe(cart => {
+      this.cart = cart;
+      console.log('Cart updated:', cart);
+    });
   }
 
   ngAfterViewInit(): void {
-    if (this.userService.isLoggedIn()) {
-      setTimeout(() => {
-        this.initializePaypal();
-      }, 0);
-    }
+    setTimeout(() => {
+      this.initializePaypal();
+    }, 0);
   }
 
   loadCart(): void {
@@ -93,10 +85,6 @@ export class CartComponent implements OnInit, AfterViewInit {
       console.error('Book ID is undefined');
       return;
     }
-    if (!this.userService.isLoggedIn()) {
-      this.notificationService.showNotification('Please log in to update the quantity.');
-      return;
-    }
     this.cartService.updateCartItem(bookId, quantity).subscribe(
       () => {
         console.log('Quantity updated');
@@ -112,10 +100,6 @@ export class CartComponent implements OnInit, AfterViewInit {
   removeFromCart(bookId: string): void {
     if (!bookId) {
       console.error('Book ID is undefined');
-      return;
-    }
-    if (!this.userService.isLoggedIn()) {
-      this.notificationService.showNotification('Please log in to remove items from the cart.');
       return;
     }
     this.cartService.removeItemFromCart(bookId).subscribe(
@@ -142,7 +126,7 @@ export class CartComponent implements OnInit, AfterViewInit {
       paypal.Buttons({
         env: 'sandbox', // Ensure this is set to sandbox for testing
         client: {
-          sandbox: 'AS4Or1-wqmvBkyfj8fC2cnXud-SZWE2jz8t4pEHndW341xHtN_F7jRkkmPPkOPrppph-Rwpat11aptOk', // Replace with your sandbox clientId
+          sandbox: 'YOUR_SANDBOX_CLIENT_ID', // Replace with your sandbox clientId
         },
         style: {
           shape: 'rect',

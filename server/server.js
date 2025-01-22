@@ -45,7 +45,7 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-  await seedBooks(); // Ensure this function is correctly defined to insert test data
+  // await seedBooks(); // Ensure this function is correctly defined to insert test data
 });
 
 // Middleware to verify tokens

@@ -20,13 +20,11 @@ export class CartSidebarComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.userService.isLoggedIn()) {
-      this.loadCart();
-      this.cartService.cart$.subscribe(cart => {
-        this.cart = cart;
-        console.log('Cart updated in sidebar:', cart);
-      });
-    }
+    this.loadCart();
+    this.cartService.cart$.subscribe(cart => {
+      this.cart = cart;
+      console.log('Cart updated in sidebar:', cart);
+    });
   }
 
   loadCart(): void {
