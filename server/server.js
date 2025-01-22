@@ -18,7 +18,7 @@ const app = express();
 const allowedOrigins = [
   'https://ebookemporium-f902e8f709be.herokuapp.com',
   'http://localhost:4200' ,
-  'https://ebookstore-mean-stack.onrender.com/'
+  'https://ebookstore-mean-stack.onrender.com'
 ];
 
 app.use(cors({

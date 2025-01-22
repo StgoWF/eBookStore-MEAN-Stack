@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://ebookemporium-5f402b9d9f4b.herokuapp.com/api',
+  apiUrl: 'https://ebookemporium-f902e8f709be.herokuapp.com/api',
   firebaseConfig: {
     apiKey: "AIzaSyDknUYaB2jurnK3Zxv1BM95cGI-J6azyp0",
     authDomain: "ebookemporium-35f6d.firebaseapp.com",
