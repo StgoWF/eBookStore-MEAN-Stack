@@ -46,9 +46,13 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', async () => {
   console.log('Connected to MongoDB');
-  // await seedBooks(); // Ensure this function is correctly defined to insert test data
+  
+  if (process.env.RUN_SEEDS === 'true') {
+    console.log('Running seeds...');
+    await seedBooks(); // Asegúrate de que esta función esté correctamente definida en `seed.js`
+    console.log('Seed data inserted successfully');
+  }
 });
-
 // Middleware to verify tokens
 const verifyToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
